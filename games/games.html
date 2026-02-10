@@ -1,0 +1,249 @@
+<!DOCTYPE html>
+<html lang="zh-CN">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>游戏天地 | 松鼠星球</title>
+    <link rel="icon" type="image/png" href="../logo.png">
+    <meta name="theme-color" content="#FF8C00">
+    <style>
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+        }
+
+        :root {
+            --orange-primary: #FF8C00;
+            --orange-light: #FFA500;
+            --orange-glow: #FFB347;
+            --bg-dark: #0D1117;
+            --bg-card: #161B22;
+            --text-light: #F0F6FC;
+            --text-dim: #8B949E;
+        }
+
+        body {
+            font-family: 'Noto Sans SC', -apple-system, BlinkMacSystemFont, sans-serif;
+            background: var(--bg-dark);
+            color: var(--text-light);
+            min-height: 100vh;
+        }
+
+        .container {
+            max-width: 1400px;
+            margin: 0 auto;
+            padding: 80px 20px 40px;
+        }
+
+        .header {
+            text-align: center;
+            margin-bottom: 50px;
+        }
+
+        .header h1 {
+            font-size: 2.5rem;
+            background: linear-gradient(135deg, var(--orange-light), var(--orange-primary), var(--orange-glow));
+            -webkit-background-clip: text;
+            -webkit-text-fill-color: transparent;
+            background-clip: text;
+            margin-bottom: 10px;
+        }
+
+        .header p {
+            color: var(--text-dim);
+            font-size: 1.1rem;
+        }
+
+        .back-btn {
+            position: fixed;
+            top: 20px;
+            left: 20px;
+            padding: 10px 20px;
+            background: var(--bg-card);
+            border: 1px solid var(--orange-primary);
+            color: var(--orange-primary);
+            border-radius: 8px;
+            cursor: pointer;
+            transition: all 0.3s ease;
+            z-index: 100;
+            text-decoration: none;
+        }
+
+        .back-btn:hover {
+            background: var(--orange-primary);
+            color: var(--bg-dark);
+        }
+
+        .games-list {
+            display: flex;
+            flex-direction: column;
+            gap: 40px;
+        }
+
+        .game-card {
+            background: var(--bg-card);
+            border-radius: 16px;
+            overflow: hidden;
+            display: flex;
+            transition: transform 0.3s ease, box-shadow 0.3s ease;
+        }
+
+        .game-card:hover {
+            transform: translateY(-5px);
+            box-shadow: 0 10px 40px rgba(255, 140, 0, 0.2);
+        }
+
+        .game-card:nth-child(odd) {
+            flex-direction: row;
+        }
+
+        .game-card:nth-child(even) {
+            flex-direction: row-reverse;
+        }
+
+        .game-image {
+            width: 400px;
+            height: 280px;
+            object-fit: cover;
+            flex-shrink: 0;
+        }
+
+        .game-image-placeholder {
+            width: 400px;
+            height: 280px;
+            background: linear-gradient(135deg, var(--bg-card) 0%, #2a3a4a 100%);
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            flex-shrink: 0;
+            font-size: 4rem;
+        }
+
+        .game-content {
+            flex: 1;
+            padding: 30px 40px;
+            display: flex;
+            flex-direction: column;
+            justify-content: center;
+        }
+
+        .game-card:nth-child(odd) .game-content {
+            align-items: flex-start;
+            text-align: left;
+        }
+
+        .game-card:nth-child(even) .game-content {
+            align-items: flex-end;
+            text-align: right;
+        }
+
+        .game-title {
+            font-size: 1.8rem;
+            color: var(--orange-primary);
+            margin-bottom: 15px;
+        }
+
+        .game-description {
+            color: var(--text-dim);
+            line-height: 1.8;
+            margin-bottom: 25px;
+            max-width: 500px;
+        }
+
+        .game-btn {
+            padding: 12px 35px;
+            background: linear-gradient(135deg, var(--orange-primary), var(--orange-dark));
+            border: none;
+            border-radius: 8px;
+            color: white;
+            font-size: 1rem;
+            cursor: pointer;
+            transition: all 0.3s ease;
+            text-decoration: none;
+            display: inline-block;
+        }
+
+        .game-btn:hover {
+            transform: scale(1.05);
+            box-shadow: 0 5px 25px rgba(255, 140, 0, 0.4);
+        }
+
+        @media (max-width: 900px) {
+            .game-card,
+            .game-card:nth-child(odd),
+            .game-card:nth-child(even) {
+                flex-direction: column;
+            }
+
+            .game-image,
+            .game-image-placeholder {
+                width: 100%;
+                height: 200px;
+            }
+
+            .game-content {
+                padding: 25px;
+            }
+
+            .game-card:nth-child(odd) .game-content,
+            .game-card:nth-child(even) .game-content {
+                align-items: flex-start;
+                text-align: left;
+            }
+
+            .game-description {
+                max-width: 100%;
+            }
+        }
+    </style>
+</head>
+<body>
+    <a href="../index.html" class="back-btn">← 返回首页</a>
+
+    <div class="container">
+        <div class="header">
+            <h1>🎮 游戏天地</h1>
+            <p>探索松鼠星球的创意游戏世界</p>
+        </div>
+
+        <div class="games-list">
+            <div class="game-card">
+                <div class="game-image-placeholder">🪐</div>
+                <div class="game-content">
+                    <h2 class="game-title">小行星</h2>
+                    <p class="game-description">一款休闲益智的太空冒险游戏。控制你的小行星在宇宙中穿梭，收集资源，躲避障碍，探索无垠的星际空间。简单的操作带来无尽的乐趣！</p>
+                    <a href="小行星.html" class="game-btn">开始游戏 →</a>
+                </div>
+            </div>
+
+            <div class="game-card">
+                <div class="game-image-placeholder">🧩</div>
+                <div class="game-content">
+                    <h2 class="game-title">消除卡片</h2>
+                    <p class="game-description">经典的三消玩法，配合炫酷的特效和流畅的动画。多种道具和特殊方块等你来发现，挑战高分榜单！</p>
+                    <a href="消除卡片.html" class="game-btn">开始游戏 →</a>
+                </div>
+            </div>
+
+            <div class="game-card">
+                <div class="game-image-placeholder">🦸</div>
+                <div class="game-content">
+                    <h2 class="game-title">勇者跑酷</h2>
+                    <p class="game-description">经典的跑酷重现！避开岩浆和其他机关。</p>
+                    <a href="勇者跑酷.html" class="game-btn">开始游戏 →</a>
+                </div>
+            </div>
+
+            <div class="game-card">
+                <div class="game-image-placeholder">🎯</div>
+                <div class="game-content">
+                    <h2 class="game-title">弹球达人</h2>
+                    <p class="game-description">物理弹球游戏，控制挡板反弹小球，击碎砖块获取高分。多种关卡设计，考验你的反应和策略。</p>
+                    <a href="#" class="game-btn">即将推出</a>
+                </div>
+            </div>
+        </div>
+    </div>
+</body>
+</html>

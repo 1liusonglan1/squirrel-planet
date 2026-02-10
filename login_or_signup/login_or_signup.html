@@ -1,0 +1,1397 @@
+<!DOCTYPE html>
+<html lang="zh-CN">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>登陆星球 - 松鼠星球</title>
+    <style>
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+        }
+
+        :root {
+            --orange-primary: #FF8C00;
+            --orange-light: #FFA500;
+            --orange-dark: #FF6B00;
+            --orange-glow: #FFB347;
+            --bg-dark: #0D1117;
+            --bg-card: #161B22;
+            --text-light: #F0F6FC;
+            --text-dim: #8B949E;
+            --code-green: #00FF9D;
+            --accent-purple: #A855F7;
+            --accent-pink: #EC4899;
+        }
+
+        body {
+            font-family: 'Noto Sans SC', -apple-system, BlinkMacSystemFont, sans-serif;
+            background: var(--bg-dark);
+            color: var(--text-light);
+            min-height: 100vh;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            padding: 20px;
+        }
+
+        .container {
+            width: 100%;
+            max-width: 500px;
+            margin: 0 auto;
+        }
+
+        .auth-container {
+            background: var(--bg-card);
+            border-radius: 20px;
+            padding: 40px;
+            border: 1px solid rgba(255, 140, 0, 0.2);
+            box-shadow: 0 20px 60px rgba(255, 140, 0, 0.2);
+            position: relative;
+            overflow: hidden;
+        }
+
+        .auth-container::before {
+            content: '';
+            position: absolute;
+            top: 0;
+            left: 0;
+            right: 0;
+            height: 4px;
+            background: linear-gradient(90deg, var(--orange-dark), var(--orange-glow), var(--orange-dark));
+        }
+
+        .auth-header {
+            text-align: center;
+            margin-bottom: 30px;
+        }
+
+        .auth-header h1 {
+            font-size: 2rem;
+            margin-bottom: 10px;
+            background: linear-gradient(135deg, var(--orange-light), var(--orange-primary));
+            -webkit-background-clip: text;
+            -webkit-text-fill-color: transparent;
+            background-clip: text;
+        }
+
+        .auth-tabs {
+            display: flex;
+            margin-bottom: 30px;
+            background: rgba(255, 140, 0, 0.1);
+            border-radius: 12px;
+            padding: 5px;
+        }
+
+        .tab-btn {
+            flex: 1;
+            padding: 15px;
+            border: none;
+            background: transparent;
+            color: var(--text-dim);
+            font-weight: 600;
+            cursor: pointer;
+            border-radius: 8px;
+            transition: all 0.3s ease;
+        }
+
+        .tab-btn.active {
+            background: var(--orange-primary);
+            color: var(--bg-dark);
+        }
+
+        .auth-form {
+            display: none;
+        }
+
+        .auth-form.active {
+            display: block;
+        }
+
+        .input-group {
+            margin-bottom: 20px;
+        }
+
+        .input-group label {
+            display: block;
+            margin-bottom: 8px;
+            color: var(--text-light);
+            font-weight: 500;
+        }
+
+        .input-container {
+            display: flex;
+            align-items: stretch;
+            border: 1px solid rgba(255, 140, 0, 0.2);
+            border-radius: 12px;
+            background: var(--bg-dark);
+            overflow: hidden;
+        }
+
+        .input-container:focus-within {
+            border-color: var(--orange-primary);
+        }
+
+        .logo-area {
+            width: 50px; /* 减小logo区域宽度 */
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            background: rgba(255, 140, 0, 0.1);
+            border-right: 1px solid rgba(255, 140, 0, 0.2);
+        }
+
+        .logo-area img {
+            width: 20px;
+            height: 20px;
+            object-fit: contain;
+        }
+
+        .logo-area svg {
+            width: 20px;
+            height: 20px;
+        }
+
+        .input-field {
+            flex: 1;
+            padding: 15px;
+            background: transparent;
+            border: none;
+            color: var(--text-light);
+            font-size: 1rem;
+            outline: none;
+        }
+
+        .input-field::placeholder {
+            color: var(--text-dim);
+        }
+
+        .input-with-btn {
+            flex: 1;
+            display: flex;
+        }
+
+        .btn-wrapper {
+            padding: 0 8px; /* 减小按钮包装器的内边距 */
+            display: flex;
+            align-items: center;
+        }
+
+        .copy-btn, .send-btn {
+            padding: 10px 10px; /* 减小按钮的内边距 */
+            background: rgba(255, 140, 0, 0.2);
+            color: var(--orange-primary);
+            border: 1px solid rgba(255, 140, 0, 0.3);
+            border-radius: 6px;
+            cursor: pointer;
+            font-size: 0.9rem;
+            transition: all 0.3s ease;
+            min-width: 40px; /* 设置最小宽度 */
+            display: flex;
+            align-items: center;
+            justify-content: center;
+        }
+
+        .copy-btn:hover, .send-btn:hover {
+            background: rgba(255, 140, 0, 0.3);
+        }
+
+        .send-btn:disabled {
+            opacity: 0.5;
+            cursor: not-allowed;
+        }
+
+        .auth-btn {
+            width: 100%;
+            padding: 15px;
+            background: linear-gradient(135deg, var(--orange-primary), var(--orange-dark));
+            color: white;
+            border: none;
+            border-radius: 12px;
+            font-size: 1.1rem;
+            font-weight: 600;
+            cursor: pointer;
+            transition: all 0.3s ease;
+            margin-bottom: 15px;
+        }
+
+        .auth-btn:hover {
+            transform: translateY(-2px);
+            box-shadow: 0 10px 25px rgba(255, 140, 0, 0.3);
+        }
+
+        .auth-btn:disabled {
+            opacity: 0.6;
+            cursor: not-allowed;
+            transform: none;
+            box-shadow: none;
+        }
+
+        .form-footer {
+            text-align: center;
+            margin-top: 10px;
+        }
+
+        .form-footer a {
+            color: var(--orange-primary);
+            text-decoration: none;
+            font-size: 0.9rem;
+        }
+
+        .form-footer a:hover {
+            text-decoration: underline;
+        }
+
+        .message {
+            padding: 15px;
+            margin: 20px 0;
+            border-radius: 8px;
+            text-align: center;
+            display: none;
+        }
+
+        .message.success {
+            background: rgba(0, 255, 157, 0.1);
+            border: 1px solid rgba(0, 255, 157, 0.3);
+            color: var(--code-green);
+        }
+
+        .message.error {
+            background: rgba(236, 72, 153, 0.1);
+            border: 1px solid rgba(236, 72, 153, 0.3);
+            color: var(--accent-pink);
+        }
+
+        .message.show {
+            display: block;
+        }
+
+        .logo-user {
+            background: rgba(255, 140, 0, 0.1);
+            width: 24px;
+            height: 24px;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            border-radius: 6px;
+        }
+
+        .logo-password {
+            background: rgba(168, 85, 247, 0.1);
+            width: 24px;
+            height: 24px;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            border-radius: 6px;
+        }
+
+        .logo-email {
+            background: rgba(236, 72, 153, 0.1);
+            width: 24px;
+            height: 24px;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            border-radius: 6px;
+        }
+
+        .logo-verify {
+            background: rgba(255, 215, 0, 0.1);
+            width: 24px;
+            height: 24px;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            border-radius: 6px;
+        }
+
+        .logo-change-animation {
+            animation: logoChange 0.3s ease;
+        }
+
+        @keyframes logoChange {
+            0% { transform: scale(1); }
+            50% { transform: scale(1.2); }
+            100% { transform: scale(1); }
+        }
+
+        /* 响应式设计 */
+        @media (max-width: 600px) {
+            .auth-container {
+                padding: 25px;
+                margin: 10px;
+            }
+
+            .input-container {
+                flex-direction: column;
+                align-items: stretch;
+            }
+
+            .logo-area {
+                border-right: none;
+                border-bottom: 1px solid rgba(255, 140, 0, 0.2);
+                padding: 10px 0;
+            }
+        }
+    </style>
+</head>
+<body>
+    <div class="container">
+        <div class="auth-container">
+            <div class="auth-header">
+                <h1>松鼠星球</h1>
+                <p>欢迎来到代码与艺术缠绕的魔法秘境</p>
+            </div>
+
+            <div class="auth-tabs">
+                <button class="tab-btn active" data-tab="login">登录</button>
+                <button class="tab-btn" data-tab="register">注册</button>
+            </div>
+
+            <!-- 登录表单 -->
+            <form id="loginForm" class="auth-form active">
+                <div class="input-group">
+                    <label for="loginUsername">用户名</label>
+                    <div class="input-container">
+                        <div class="logo-area" id="loginLogoArea">
+                            <div class="logo-user">
+                                <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+                                    <path d="M20 21v-2a4 4 0 0 0-4-4H8a4 4 0 0 0-4 4v2"/>
+                                    <circle cx="12" cy="7" r="4"/>
+                                </svg>
+                            </div>
+                        </div>
+                        <input type="text" id="loginUsername" class="input-field" placeholder="请输入用户名" autocomplete="username">
+                    </div>
+                </div>
+
+                <div class="input-group">
+                    <label for="loginPassword">密码</label>
+                    <div class="input-container">
+                        <div class="logo-area" id="loginPasswordLogoArea">
+                            <div class="logo-password">
+                                <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+                                    <rect x="3" y="11" width="18" height="11" rx="2" ry="2"/>
+                                    <path d="M7 11V7a5 5 0 0 1 10 0v4"/>
+                                </svg>
+                            </div>
+                        </div>
+                        <input type="password" id="loginPassword" class="input-field" placeholder="请输入密码" autocomplete="current-password">
+                        <div class="btn-wrapper">
+                            <button type="button" class="copy-btn" id="loginCopyBtn" title="复制密码">📋</button>
+                        </div>
+                    </div>
+                </div>
+
+                <button type="submit" class="auth-btn">登录</button>
+
+                <div class="form-footer">
+                    <a href="#" id="forgotPassword">忘记密码？</a>
+                </div>
+            </form>
+
+            <!-- 注册表单 -->
+            <form id="registerForm" class="auth-form">
+                <div class="input-group">
+                    <label for="registerUsername">用户名</label>
+                    <div class="input-container">
+                        <div class="logo-area" id="registerLogoArea">
+                            <div class="logo-user">
+                                <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+                                    <path d="M20 21v-2a4 4 0 0 0-4-4H8a4 4 0 0 0-4 4v2"/>
+                                    <circle cx="12" cy="7" r="4"/>
+                                </svg>
+                            </div>
+                        </div>
+                        <input type="text" id="registerUsername" class="input-field" placeholder="请输入用户名" autocomplete="username">
+                    </div>
+                </div>
+
+                <div class="input-group">
+                    <label for="registerPassword">密码</label>
+                    <div class="input-container">
+                        <div class="logo-area" id="registerPasswordLogoArea">
+                            <div class="logo-password">
+                                <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+                                    <rect x="3" y="11" width="18" height="11" rx="2" ry="2"/>
+                                    <path d="M7 11V7a5 5 0 0 1 10 0v4"/>
+                                </svg>
+                            </div>
+                        </div>
+                        <input type="password" id="registerPassword" class="input-field" placeholder="请输入密码" autocomplete="new-password">
+                        <div class="btn-wrapper">
+                            <button type="button" class="copy-btn" id="registerCopyBtn" title="复制密码">📋</button>
+                        </div>
+                    </div>
+                </div>
+
+                <div class="input-group">
+                    <label for="confirmPassword">再次输入密码</label>
+                    <div class="input-container">
+                        <div class="logo-area" id="confirmPasswordLogoArea">
+                            <div class="logo-password">
+                                <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+                                    <rect x="3" y="11" width="18" height="11" rx="2" ry="2"/>
+                                    <path d="M7 11V7a5 5 0 0 1 10 0v4"/>
+                                </svg>
+                            </div>
+                        </div>
+                        <input type="password" id="confirmPassword" class="input-field" placeholder="请再次输入密码" autocomplete="new-password">
+                    </div>
+                </div>
+
+                <div class="input-group">
+                    <label for="email">邮箱</label>
+                    <div class="input-container">
+                        <div class="logo-area" id="emailLogoArea">
+                            <div class="logo-email">
+                                <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+                                    <rect x="3" y="5" width="18" height="14" rx="2" ry="2"/>
+                                    <polyline points="3,5 12,12 21,5"/>
+                                </svg>
+                            </div>
+                        </div>
+                        <input type="email" id="email" class="input-field" placeholder="请输入邮箱" autocomplete="email">
+                        <div class="btn-wrapper">
+                            <button type="button" class="send-btn" id="sendVerification" title="发送验证码">发送</button>
+                        </div>
+                    </div>
+                </div>
+
+                <div class="input-group">
+                    <label for="verification">验证码</label>
+                    <div class="input-container">
+                        <div class="logo-area" id="verificationLogoArea">
+                            <div class="logo-verify">
+                                <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+                                    <circle cx="12" cy="12" r="10"/>
+                                    <polyline points="12,6 12,12 16,14"/>
+                                </svg>
+                            </div>
+                        </div>
+                        <input type="text" id="verification" class="input-field" placeholder="请输入验证码">
+                    </div>
+                </div>
+
+                <button type="submit" class="auth-btn">注册</button>
+            </form>
+
+            <!-- 忘记密码表单 -->
+            <form id="forgotPasswordForm" class="auth-form">
+                <div class="input-group">
+                    <label for="forgotEmail">邮箱</label>
+                    <div class="input-container">
+                        <div class="logo-area" id="forgotEmailLogoArea">
+                            <div class="logo-email">
+                                <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+                                    <rect x="3" y="5" width="18" height="14" rx="2" ry="2"/>
+                                    <polyline points="3,5 12,12 21,5"/>
+                                </svg>
+                            </div>
+                        </div>
+                        <input type="email" id="forgotEmail" class="input-field" placeholder="请输入注册时使用的邮箱">
+                    </div>
+                </div>
+
+                <button type="submit" class="auth-btn">发送验证码</button>
+
+                <div class="form-footer">
+                    <a href="#" id="backToLogin">返回登录</a>
+                </div>
+            </form>
+
+            <!-- 验证码验证表单 -->
+            <form id="verifyCodeForm" class="auth-form">
+                <div class="input-group">
+                    <label for="verifyEmail">邮箱</label>
+                    <div class="input-container">
+                        <div class="logo-area" id="verifyEmailLogoArea">
+                            <div class="logo-email">
+                                <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+                                    <rect x="3" y="5" width="18" height="14" rx="2" ry="2"/>
+                                    <polyline points="3,5 12,12 21,5"/>
+                                </svg>
+                            </div>
+                        </div>
+                        <input type="email" id="verifyEmail" class="input-field" placeholder="请输入邮箱" readonly>
+                    </div>
+                </div>
+
+                <div class="input-group">
+                    <label for="verificationCode">验证码</label>
+                    <div class="input-container">
+                        <div class="logo-area" id="verificationCodeLogoArea">
+                            <div class="logo-verify">
+                                <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+                                    <circle cx="12" cy="12" r="10"/>
+                                    <polyline points="12,6 12,12 16,14"/>
+                                </svg>
+                            </div>
+                        </div>
+                        <input type="text" id="verificationCode" class="input-field" placeholder="请输入收到的验证码">
+                    </div>
+                </div>
+
+                <button type="submit" class="auth-btn">验证验证码</button>
+
+                <div class="form-footer">
+                    <a href="#" id="backToForgot">返回上一步</a>
+                </div>
+            </form>
+
+            <!-- 重置密码表单 -->
+            <form id="resetPasswordForm" class="auth-form">
+                <div class="input-group">
+                    <label for="resetNewPassword">新密码</label>
+                    <div class="input-container">
+                        <div class="logo-area" id="resetPasswordLogoArea">
+                            <div class="logo-password">
+                                <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+                                    <rect x="3" y="11" width="18" height="11" rx="2" ry="2"/>
+                                    <path d="M7 11V7a5 5 0 0 1 10 0v4"/>
+                                </svg>
+                            </div>
+                        </div>
+                        <input type="password" id="resetNewPassword" class="input-field" placeholder="请输入新密码">
+                    </div>
+                </div>
+
+                <div class="input-group">
+                    <label for="resetConfirmPassword">确认新密码</label>
+                    <div class="input-container">
+                        <div class="logo-area" id="resetConfirmPasswordLogoArea">
+                            <div class="logo-password">
+                                <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+                                    <rect x="3" y="11" width="18" height="11" rx="2" ry="2"/>
+                                    <path d="M7 11V7a5 5 0 0 1 10 0v4"/>
+                                </svg>
+                            </div>
+                        </div>
+                        <input type="password" id="resetConfirmPassword" class="input-field" placeholder="请再次输入新密码">
+                    </div>
+                </div>
+
+                <input type="hidden" id="resetTempToken">
+
+                <button type="submit" class="auth-btn">重置密码</button>
+
+                <div class="form-footer">
+                    <a href="#" id="backToLogin2">返回登录</a>
+                </div>
+            </form>
+        </div>
+    </div>
+
+        const API_BASE_URL = 'https://song-shu.infinityfree.me';
+        // 当前邮箱（用于忘记密码流程）
+        let currentEmail = '';
+        // 验证码发送状态
+        let isSending = false;
+
+        // 切换登录/注册表单
+        document.querySelectorAll('.tab-btn').forEach(button => {
+            button.addEventListener('click', () => {
+                // 移除所有按钮的active类
+                document.querySelectorAll('.tab-btn').forEach(btn => {
+                    btn.classList.remove('active');
+                });
+                
+                // 添加active类到当前按钮
+                button.classList.add('active');
+                
+                // 隐藏所有表单
+                document.querySelectorAll('.auth-form').forEach(form => {
+                    form.classList.remove('active');
+                });
+                
+                // 显示对应表单
+                const tab = button.getAttribute('data-tab');
+                document.getElementById(`${tab}Form`).classList.add('active');
+            });
+        });
+
+        // 登录表单提交事件
+        document.getElementById('loginForm').addEventListener('submit', async function(e) {
+            e.preventDefault();
+            
+            const username = document.getElementById('loginUsername').value;
+            const password = document.getElementById('loginPassword').value;
+            
+            if (!username || !password) {
+                alert('请填写用户名和密码');
+                return;
+            }
+            
+            // 使用SHA-256对密码进行加密
+            const hashedPassword = await hashPassword(password);
+            
+            try {
+                // 发送请求到后端
+                const response = await fetch(API_BASE_URL + '/auth.php', {
+                    method: 'POST',
+                    headers: {
+                        'Content-Type': 'application/json'
+                    },
+                    body: JSON.stringify({
+                        mode: 'login',
+                        name: username,
+                        pass: hashedPassword
+                    })
+                });
+                
+                const result = await response.json();
+                
+                if (result.success) {
+                    // 登录成功处理
+                    alert('登录成功！');
+                    // 这里可以重定向到主页或其他页面
+                    console.log('登录成功:', result.user);
+                } else {
+                    alert(result.message || '登录失败');
+                }
+            } catch (error) {
+                console.error('登录错误:', error);
+                alert('网络错误，请稍后重试');
+            }
+        });
+
+        // 注册表单提交事件
+        document.getElementById('registerForm').addEventListener('submit', async function(e) {
+            e.preventDefault();
+            
+            const username = document.getElementById('registerUsername').value;
+            const password = document.getElementById('registerPassword').value;
+            const confirmPassword = document.getElementById('confirmPassword').value;
+            const email = document.getElementById('email').value;
+            const verification = document.getElementById('verification').value;
+            
+            if (!username || !password || !confirmPassword || !email || !verification) {
+                alert('请填写所有字段');
+                return;
+            }
+            
+            if (password !== confirmPassword) {
+                alert('两次输入的密码不一致');
+                return;
+            }
+            
+            if (password.length < 6) {
+                alert('密码长度至少为6位');
+                return;
+            }
+            
+            if (!isValidEmail(email)) {
+                alert('邮箱格式不正确');
+                return;
+            }
+            
+            // 使用SHA-256对密码进行加密
+            const hashedPassword = await hashPassword(password);
+            
+            try {
+                // 发送请求到后端，包含邮箱和验证码
+                const response = await fetch(API_BASE_URL + '/auth.php', {
+                    method: 'POST',
+                    headers: {
+                        'Content-Type': 'application/json'
+                    },
+                    body: JSON.stringify({
+                        mode: 'register',
+                        name: username,
+                        pass: hashedPassword,
+                        email: email,
+                        verification_code: verification  // 添加验证码验证
+                    })
+                });
+                
+                const result = await response.json();
+                
+                if (result.success) {
+                    alert('注册成功！');
+                    // 切换到登录表单
+                    document.querySelectorAll('.tab-btn').forEach(btn => {
+                        btn.classList.remove('active');
+                    });
+                    document.querySelector('.tab-btn[data-tab="login"]').classList.add('active');
+                    
+                    // 隐藏所有表单，显示登录表单
+                    document.querySelectorAll('.auth-form').forEach(form => {
+                        form.classList.remove('active');
+                    });
+                    document.getElementById('loginForm').classList.add('active');
+                } else {
+                    alert(result.message || '注册失败');
+                }
+            } catch (error) {
+                console.error('注册错误:', error);
+                alert('网络错误，请稍后重试');
+            }
+        });
+
+        // 忘记密码表单提交事件
+        document.getElementById('forgotPasswordForm').addEventListener('submit', async function(e) {
+            e.preventDefault();
+            
+            const email = document.getElementById('forgotEmail').value;
+            
+            if (!email) {
+                alert('请填写邮箱');
+                return;
+            }
+            
+            if (!isValidEmail(email)) {
+                alert('邮箱格式不正确');
+                return;
+            }
+            
+            try {
+                // 发送请求到后端
+                const response = await fetch(API_BASE_URL + '/auth.php', {
+                    method: 'POST',
+                    headers: {
+                        'Content-Type': 'application/json'
+                    },
+                    body: JSON.stringify({
+                        mode: 'forgot_password',
+                        email: email
+                    })
+                });
+                
+                const result = await response.json();
+                
+                if (result.success) {
+                    alert(result.message);
+                    // 存储邮箱，用于下一步验证
+                    currentEmail = email;
+                    // 显示验证码验证表单
+                    document.querySelectorAll('.auth-form').forEach(form => {
+                        form.classList.remove('active');
+                    });
+                    document.getElementById('verifyCodeForm').classList.add('active');
+                    // 填入邮箱
+                    document.getElementById('verifyEmail').value = email;
+                } else {
+                    alert(result.message || '发送失败');
+                }
+            } catch (error) {
+                console.error('忘记密码错误:', error);
+                alert('网络错误，请稍后重试');
+            }
+        });
+
+        // 验证码验证表单提交事件
+        document.getElementById('verifyCodeForm').addEventListener('submit', async function(e) {
+            e.preventDefault();
+            
+            const email = document.getElementById('verifyEmail').value;
+            const code = document.getElementById('verificationCode').value;
+            
+            if (!email || !code) {
+                alert('请填写邮箱和验证码');
+                return;
+            }
+            
+            if (!isValidEmail(email)) {
+                alert('邮箱格式不正确');
+                return;
+            }
+            
+            try {
+                // 发送请求到后端
+                const response = await fetch(API_BASE_URL + '/auth.php', {
+                    method: 'POST',
+                    headers: {
+                        'Content-Type': 'application/json'
+                    },
+                    body: JSON.stringify({
+                        mode: 'verify_code',
+                        email: email,
+                        code: code
+                    })
+                });
+                
+                const result = await response.json();
+                
+                if (result.success) {
+                    alert('验证码验证成功！请设置新密码');
+                    // 显示重置密码表单
+                    document.querySelectorAll('.auth-form').forEach(form => {
+                        form.classList.remove('active');
+                    });
+                    document.getElementById('resetPasswordForm').classList.add('active');
+                    // 存储临时令牌
+                    document.getElementById('resetTempToken').value = result.temp_token;
+                } else {
+                    alert(result.message || '验证失败');
+                }
+            } catch (error) {
+                console.error('验证码验证错误:', error);
+                alert('网络错误，请稍后重试');
+            }
+        });
+
+        // 重置密码表单提交事件
+        document.getElementById('resetPasswordForm').addEventListener('submit', async function(e) {
+            e.preventDefault();
+            
+            const newPassword = document.getElementById('resetNewPassword').value;
+            const confirmPassword = document.getElementById('resetConfirmPassword').value;
+            const tempToken = document.getElementById('resetTempToken').value;
+            
+            if (!newPassword || !confirmPassword || !tempToken) {
+                alert('请填写所有字段');
+                return;
+            }
+            
+            if (newPassword !== confirmPassword) {
+                alert('两次输入的密码不一致');
+                return;
+            }
+            
+            if (newPassword.length < 6) {
+                alert('密码长度至少为6位');
+                return;
+            }
+            
+            // 使用SHA-256对密码进行加密
+            const hashedPassword = await hashPassword(newPassword);
+            
+            try {
+                // 发送请求到后端
+                const response = await fetch(API_BASE_URL + '/auth.php', {
+                    method: 'POST',
+                    headers: {
+                        'Content-Type': 'application/json'
+                    },
+                    body: JSON.stringify({
+                        mode: 'reset_password',
+                        temp_token: tempToken,
+                        new_password: hashedPassword
+                    })
+                });
+                
+                const result = await response.json();
+                
+                if (result.success) {
+                    alert('密码重置成功！请使用新密码登录');
+                    // 返回到登录页面
+                    document.querySelectorAll('.tab-btn').forEach(btn => {
+                        btn.classList.remove('active');
+                    });
+                    document.querySelector('.tab-btn[data-tab="login"]').classList.add('active');
+                    
+                    // 隐藏所有表单，显示登录表单
+                    document.querySelectorAll('.auth-form').forEach(form => {
+                        form.classList.remove('active');
+                    });
+                    document.getElementById('loginForm').classList.add('active');
+                } else {
+                    alert(result.message || '重置失败');
+                }
+            } catch (error) {
+                console.error('重置密码错误:', error);
+                alert('网络错误，请稍后重试');
+            }
+        });
+
+        // 登录页面复制密码按钮功能
+        document.getElementById('loginCopyBtn').addEventListener('click', function() {
+            const passwordField = document.getElementById('loginPassword');
+            passwordField.select();
+            document.execCommand('copy');
+            
+            // 临时更改按钮文本
+            const originalText = this.innerHTML;
+            this.innerHTML = '✓';
+            setTimeout(() => {
+                this.innerHTML = originalText;
+            }, 2000);
+        });
+
+        // 注册页面复制密码按钮功能
+        document.getElementById('registerCopyBtn').addEventListener('click', function() {
+            const passwordField = document.getElementById('registerPassword');
+            passwordField.select();
+            document.execCommand('copy');
+            
+            // 临时更改按钮文本
+            const originalText = this.innerHTML;
+            this.innerHTML = '✓';
+            setTimeout(() => {
+                this.innerHTML = originalText;
+            }, 2000);
+        });
+
+        // 发送验证码按钮功能
+        document.getElementById('sendVerification').addEventListener('click', async function() {
+            const email = document.getElementById('email').value;
+            if (!email) {
+                alert('请先填写邮箱');
+                return;
+            }
+            
+            if (!isValidEmail(email)) {
+                alert('邮箱格式不正确');
+                return;
+            }
+            
+            if (isSending) {
+                return; // 防止重复点击
+            }
+            
+            isSending = true;
+            const originalText = this.innerHTML;
+            let timeLeft = 60;
+            
+            // 禁用按钮并开始倒计时
+            this.disabled = true;
+            this.innerHTML = `${timeLeft}秒后重发`;
+            
+            // 开始倒计时
+            const countdown = setInterval(() => {
+                timeLeft--;
+                this.innerHTML = `${timeLeft}秒后重发`;
+                
+                if (timeLeft <= 0) {
+                    clearInterval(countdown);
+                    this.disabled = false;
+                    this.innerHTML = originalText;
+                    isSending = false;
+                }
+            }, 1000);
+            
+            try {
+                // 发送请求到后端，验证邮箱是否存在
+                const response = await fetch(API_BASE_URL + '/auth.php', {
+                    method: 'POST',
+                    headers: {
+                        'Content-Type': 'application/json'
+                    },
+                    body: JSON.stringify({
+                        mode: 'forgot_password', // 重用发送验证码的后端逻辑
+                        email: email
+                    })
+                });
+                
+                const result = await response.json();
+                
+                if (result.success) {
+                    alert('验证码已发送到您的邮箱');
+                } else {
+                    alert(result.message || '验证码发送失败');
+                    // 如果发送失败，重置倒计时
+                    clearInterval(countdown);
+                    this.disabled = false;
+                    this.innerHTML = originalText;
+                    isSending = false;
+                }
+            } catch (error) {
+                console.error('验证码发送错误:', error);
+                alert('网络错误，请稍后重试');
+                // 如果发送失败，重置倒计时
+                clearInterval(countdown);
+                this.disabled = false;
+                this.innerHTML = originalText;
+                isSending = false;
+            }
+        });
+
+        // 忘记密码链接
+        document.getElementById('forgotPassword').addEventListener('click', function(e) {
+            e.preventDefault();
+            
+            // 隐藏所有表单，显示忘记密码表单
+            document.querySelectorAll('.auth-form').forEach(form => {
+                form.classList.remove('active');
+            });
+            document.getElementById('forgotPasswordForm').classList.add('active');
+        });
+
+        // 返回登录链接（忘记密码表单）
+        document.getElementById('backToLogin').addEventListener('click', function(e) {
+            e.preventDefault();
+            
+            // 隐藏所有表单，显示登录表单
+            document.querySelectorAll('.auth-form').forEach(form => {
+                form.classList.remove('active');
+            });
+            document.getElementById('loginForm').classList.add('active');
+        });
+
+        // 返回上一步链接（验证码验证表单）
+        document.getElementById('backToForgot').addEventListener('click', function(e) {
+            e.preventDefault();
+            
+            // 隐藏所有表单，显示忘记密码表单
+            document.querySelectorAll('.auth-form').forEach(form => {
+                form.classList.remove('active');
+            });
+            document.getElementById('forgotPasswordForm').classList.add('active');
+        });
+
+        // 返回登录链接（重置密码表单）
+        document.getElementById('backToLogin2').addEventListener('click', function(e) {
+            e.preventDefault();
+            
+            // 隐藏所有表单，显示登录表单
+            document.querySelectorAll('.auth-form').forEach(form => {
+                form.classList.remove('active');
+            });
+            document.getElementById('loginForm').classList.add('active');
+        });
+
+        // 用户名输入框的logo动画
+        const loginUsername = document.getElementById('loginUsername');
+        const loginLogoArea = document.getElementById('loginLogoArea');
+        
+        loginUsername.addEventListener('focus', () => {
+            loginLogoArea.innerHTML = `
+                <div class="logo-user logo-change-animation">
+                    <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+                        <path d="M20 21v-2a4 4 0 0 0-4-4H8a4 4 0 0 0-4 4v2"/>
+                        <circle cx="12" cy="7" r="4"/>
+                    </svg>
+                </div>
+            `;
+        });
+        
+        loginUsername.addEventListener('blur', () => {
+            if (!loginUsername.value) {
+                loginLogoArea.innerHTML = `
+                    <div class="logo-user">
+                        <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+                            <path d="M20 21v-2a4 4 0 0 0-4-4H8a4 4 0 0 0-4 4v2"/>
+                            <circle cx="12" cy="7" r="4"/>
+                        </svg>
+                    </div>
+                `;
+            }
+        });
+
+        // 登录表单密码输入时的logo动画
+        const loginPassword = document.getElementById('loginPassword');
+        const loginPasswordLogoArea = document.getElementById('loginPasswordLogoArea');
+        
+        loginPassword.addEventListener('focus', () => {
+            loginPasswordLogoArea.innerHTML = `
+                <div class="logo-password logo-change-animation">
+                    <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+                        <rect x="3" y="11" width="18" height="11" rx="2" ry="2"/>
+                        <path d="M7 11V7a5 5 0 0 1 10 0v4"/>
+                    </svg>
+                </div>
+            `;
+        });
+        
+        loginPassword.addEventListener('blur', () => {
+            if (!loginPassword.value) {
+                loginPasswordLogoArea.innerHTML = `
+                    <div class="logo-password">
+                        <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+                            <rect x="3" y="11" width="18" height="11" rx="2" ry="2"/>
+                            <path d="M7 11V7a5 5 0 0 1 10 0v4"/>
+                        </svg>
+                    </div>
+                `;
+            }
+        });
+
+        // 注册用户名输入时的logo动画
+        const registerUsername = document.getElementById('registerUsername');
+        const registerLogoArea = document.getElementById('registerLogoArea');
+        
+        registerUsername.addEventListener('focus', () => {
+            registerLogoArea.innerHTML = `
+                <div class="logo-user logo-change-animation">
+                    <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+                        <path d="M20 21v-2a4 4 0 0 0-4-4H8a4 4 0 0 0-4 4v2"/>
+                        <circle cx="12" cy="7" r="4"/>
+                    </svg>
+                </div>
+            `;
+        });
+        
+        registerUsername.addEventListener('blur', () => {
+            if (!registerUsername.value) {
+                registerLogoArea.innerHTML = `
+                    <div class="logo-user">
+                        <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+                            <path d="M20 21v-2a4 4 0 0 0-4-4H8a4 4 0 0 0-4 4v2"/>
+                            <circle cx="12" cy="7" r="4"/>
+                        </svg>
+                    </div>
+                `;
+            }
+        });
+
+        // 注册表单密码输入时的logo动画
+        const registerPassword = document.getElementById('registerPassword');
+        const registerPasswordLogoArea = document.getElementById('registerPasswordLogoArea');
+        
+        registerPassword.addEventListener('focus', () => {
+            registerPasswordLogoArea.innerHTML = `
+                <div class="logo-password logo-change-animation">
+                    <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+                        <rect x="3" y="11" width="18" height="11" rx="2" ry="2"/>
+                        <path d="M7 11V7a5 5 0 0 1 10 0v4"/>
+                    </svg>
+                </div>
+            `;
+        });
+        
+        registerPassword.addEventListener('blur', () => {
+            if (!registerPassword.value) {
+                registerPasswordLogoArea.innerHTML = `
+                    <div class="logo-password">
+                        <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+                            <rect x="3" y="11" width="18" height="11" rx="2" ry="2"/>
+                            <path d="M7 11V7a5 5 0 0 1 10 0v4"/>
+                        </svg>
+                    </div>
+                `;
+            }
+        });
+
+        // 确认密码输入时的logo动画
+        const confirmPassword = document.getElementById('confirmPassword');
+        const confirmPasswordLogoArea = document.getElementById('confirmPasswordLogoArea');
+        
+        confirmPassword.addEventListener('focus', () => {
+            confirmPasswordLogoArea.innerHTML = `
+                <div class="logo-password logo-change-animation">
+                    <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+                        <rect x="3" y="11" width="18" height="11" rx="2" ry="2"/>
+                        <path d="M7 11V7a5 5 0 0 1 10 0v4"/>
+                    </svg>
+                </div>
+            `;
+        });
+        
+        confirmPassword.addEventListener('blur', () => {
+            if (!confirmPassword.value) {
+                confirmPasswordLogoArea.innerHTML = `
+                    <div class="logo-password">
+                        <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+                            <rect x="3" y="11" width="18" height="11" rx="2" ry="2"/>
+                            <path d="M7 11V7a5 5 0 0 1 10 0v4"/>
+                        </svg>
+                    </div>
+                `;
+            }
+        });
+
+        // 邮箱输入时的logo动画
+        const email = document.getElementById('email');
+        const emailLogoArea = document.getElementById('emailLogoArea');
+        
+        email.addEventListener('focus', () => {
+            emailLogoArea.innerHTML = `
+                <div class="logo-email logo-change-animation">
+                    <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+                        <rect x="3" y="5" width="18" height="14" rx="2" ry="2"/>
+                        <polyline points="3,5 12,12 21,5"/>
+                    </svg>
+                </div>
+            `;
+        });
+        
+        email.addEventListener('blur', () => {
+            if (!email.value) {
+                emailLogoArea.innerHTML = `
+                    <div class="logo-email">
+                        <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+                            <rect x="3" y="5" width="18" height="14" rx="2" ry="2"/>
+                            <polyline points="3,5 12,12 21,5"/>
+                        </svg>
+                    </div>
+                `;
+            }
+        });
+
+        // 验证码输入时的logo动画
+        const verification = document.getElementById('verification');
+        const verificationLogoArea = document.getElementById('verificationLogoArea');
+        
+        verification.addEventListener('focus', () => {
+            verificationLogoArea.innerHTML = `
+                <div class="logo-verify logo-change-animation">
+                    <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+                        <circle cx="12" cy="12" r="10"/>
+                        <polyline points="12,6 12,12 16,14"/>
+                    </svg>
+                </div>
+            `;
+        });
+        
+        verification.addEventListener('blur', () => {
+            if (!verification.value) {
+                verificationLogoArea.innerHTML = `
+                    <div class="logo-verify">
+                        <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+                            <circle cx="12" cy="12" r="10"/>
+                            <polyline points="12,6 12,12 16,14"/>
+                        </svg>
+                    </div>
+                `;
+            }
+        });
+
+        // 忘记密码邮箱输入时的logo动画
+        const forgotEmail = document.getElementById('forgotEmail');
+        const forgotEmailLogoArea = document.getElementById('forgotEmailLogoArea');
+        
+        forgotEmail.addEventListener('focus', () => {
+            forgotEmailLogoArea.innerHTML = `
+                <div class="logo-email logo-change-animation">
+                    <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+                        <rect x="3" y="5" width="18" height="14" rx="2" ry="2"/>
+                        <polyline points="3,5 12,12 21,5"/>
+                    </svg>
+                </div>
+            `;
+        });
+        
+        forgotEmail.addEventListener('blur', () => {
+            if (!forgotEmail.value) {
+                forgotEmailLogoArea.innerHTML = `
+                    <div class="logo-email">
+                        <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+                            <rect x="3" y="5" width="18" height="14" rx="2" ry="2"/>
+                            <polyline points="3,5 12,12 21,5"/>
+                        </svg>
+                    </div>
+                `;
+            }
+        });
+
+        // 验证邮箱输入时的logo动画
+        const verifyEmail = document.getElementById('verifyEmail');
+        const verifyEmailLogoArea = document.getElementById('verifyEmailLogoArea');
+        
+        verifyEmail.addEventListener('focus', () => {
+            verifyEmailLogoArea.innerHTML = `
+                <div class="logo-email logo-change-animation">
+                    <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+                        <rect x="3" y="5" width="18" height="14" rx="2" ry="2"/>
+                        <polyline points="3,5 12,12 21,5"/>
+                    </svg>
+                </div>
+            `;
+        });
+        
+        verifyEmail.addEventListener('blur', () => {
+            if (!verifyEmail.value) {
+                verifyEmailLogoArea.innerHTML = `
+                    <div class="logo-email">
+                        <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+                            <rect x="3" y="5" width="18" height="14" rx="2" ry="2"/>
+                            <polyline points="3,5 12,12 21,5"/>
+                        </svg>
+                    </div>
+                `;
+            }
+        });
+
+        // 验证码输入时的logo动画（验证表单）
+        const verificationCode = document.getElementById('verificationCode');
+        const verificationCodeLogoArea = document.getElementById('verificationCodeLogoArea');
+        
+        verificationCode.addEventListener('focus', () => {
+            verificationCodeLogoArea.innerHTML = `
+                <div class="logo-verify logo-change-animation">
+                    <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+                        <circle cx="12" cy="12" r="10"/>
+                        <polyline points="12,6 12,12 16,14"/>
+                    </svg>
+                </div>
+            `;
+        });
+        
+        verificationCode.addEventListener('blur', () => {
+            if (!verificationCode.value) {
+                verificationCodeLogoArea.innerHTML = `
+                    <div class="logo-verify">
+                        <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+                            <circle cx="12" cy="12" r="10"/>
+                            <polyline points="12,6 12,12 16,14"/>
+                        </svg>
+                    </div>
+                `;
+            }
+        });
+
+        // 重置密码输入时的logo动画
+        const resetNewPassword = document.getElementById('resetNewPassword');
+        const resetPasswordLogoArea = document.getElementById('resetPasswordLogoArea');
+        
+        resetNewPassword.addEventListener('focus', () => {
+            resetPasswordLogoArea.innerHTML = `
+                <div class="logo-password logo-change-animation">
+                    <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+                        <rect x="3" y="11" width="18" height="11" rx="2" ry="2"/>
+                        <path d="M7 11V7a5 5 0 0 1 10 0v4"/>
+                    </svg>
+                </div>
+            `;
+        });
+        
+        resetNewPassword.addEventListener('blur', () => {
+            if (!resetNewPassword.value) {
+                resetPasswordLogoArea.innerHTML = `
+                    <div class="logo-password">
+                        <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+                            <rect x="3" y="11" width="18" height="11" rx="2" ry="2"/>
+                            <path d="M7 11V7a5 5 0 0 1 10 0v4"/>
+                        </svg>
+                    </div>
+                `;
+            }
+        });
+
+        // 确认重置密码输入时的logo动画
+        const resetConfirmPassword = document.getElementById('resetConfirmPassword');
+        const resetConfirmPasswordLogoArea = document.getElementById('resetConfirmPasswordLogoArea');
+        
+        resetConfirmPassword.addEventListener('focus', () => {
+            resetConfirmPasswordLogoArea.innerHTML = `
+                <div class="logo-password logo-change-animation">
+                    <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+                        <rect x="3" y="11" width="18" height="11" rx="2" ry="2"/>
+                        <path d="M7 11V7a5 5 0 0 1 10 0v4"/>
+                    </svg>
+                </div>
+            `;
+        });
+        
+        resetConfirmPassword.addEventListener('blur', () => {
+            if (!resetConfirmPassword.value) {
+                resetConfirmPasswordLogoArea.innerHTML = `
+                    <div class="logo-password">
+                        <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+                            <rect x="3" y="11" width="18" height="11" rx="2" ry="2"/>
+                            <path d="M7 11V7a5 5 0 0 1 10 0v4"/>
+                        </svg>
+                    </div>
+                `;
+            }
+        });
+
+        // 使用Web Crypto API进行密码哈希
+        async function hashPassword(password) {
+            const encoder = new TextEncoder();
+            const data = encoder.encode(password);
+            const hashBuffer = await crypto.subtle.digest('SHA-256', data);
+            const hashArray = Array.from(new Uint8Array(hashBuffer));
+            return hashArray.map(b => b.toString(16).padStart(2, '0')).join('');
+        }
+
+        // 验证邮箱格式
+        function isValidEmail(email) {
+            const emailRegex = /^[^\s@]+@[^\s@]+\.[^\s@]+$/;
+            return emailRegex.test(email);
+        }
+    </script>
+</body>
+</html>

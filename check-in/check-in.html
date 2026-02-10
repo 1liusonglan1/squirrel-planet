@@ -1,0 +1,539 @@
+<!DOCTYPE html>
+<html lang="zh-CN">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>松鼠签到 - 松鼠星球</title>
+    <link rel="icon" type="image/png" href="logo.png">
+    <style>
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+        }
+
+        :root {
+            --orange-primary: #FF8C00;
+            --orange-light: #FFA500;
+            --orange-dark: #FF6B00;
+            --orange-glow: #FFB347;
+            --bg-dark: #0D1117;
+            --bg-card: #161B22;
+            --text-light: #F0F6FC;
+            --text-dim: #8B949E;
+            --code-green: #00FF9D;
+            --accent-purple: #A855F7;
+            --accent-pink: #EC4899;
+        }
+
+        body {
+            font-family: 'Noto Sans SC', -apple-system, BlinkMacSystemFont, sans-serif;
+            background: var(--bg-dark);
+            color: var(--text-light);
+            min-height: 100vh;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            padding: 20px;
+        }
+
+        .container {
+            width: 100%;
+            max-width: 600px;
+            margin: 0 auto;
+        }
+
+        .check-in-container {
+            background: var(--bg-card);
+            border-radius: 20px;
+            padding: 40px;
+            border: 1px solid rgba(255, 140, 0, 0.2);
+            box-shadow: 0 20px 60px rgba(255, 140, 0, 0.2);
+            position: relative;
+            overflow: hidden;
+            text-align: center;
+        }
+
+        .check-in-container::before {
+            content: '';
+            position: absolute;
+            top: 0;
+            left: 0;
+            right: 0;
+            height: 4px;
+            background: linear-gradient(90deg, var(--orange-dark), var(--orange-glow), var(--orange-dark));
+        }
+
+        .header {
+            text-align: center;
+            margin-bottom: 30px;
+        }
+
+        .logo {
+            width: 80px;
+            height: 80px;
+            margin: 0 auto 15px;
+            display: block;
+        }
+
+        .header h1 {
+            font-size: 2rem;
+            margin-bottom: 10px;
+            background: linear-gradient(135deg, var(--orange-light), var(--orange-primary));
+            -webkit-background-clip: text;
+            -webkit-text-fill-color: transparent;
+            background-clip: text;
+        }
+
+        .check-in-btn {
+            display: inline-block;
+            padding: 16px 40px;
+            background: linear-gradient(135deg, var(--orange-primary), var(--orange-dark));
+            color: white;
+            text-decoration: none;
+            border-radius: 50px;
+            font-weight: 600;
+            font-size: 1.1rem;
+            cursor: pointer;
+            transition: all 0.3s ease;
+            border: none;
+            margin: 20px 0;
+        }
+
+        .check-in-btn:hover {
+            transform: translateY(-3px);
+            box-shadow: 0 15px 40px rgba(255, 140, 0, 0.4);
+        }
+
+        .check-in-btn:active {
+            transform: translateY(-1px) scale(0.98);
+        }
+
+        .result-container {
+            background: rgba(255, 140, 0, 0.1);
+            border-radius: 15px;
+            padding: 25px;
+            margin-top: 25px;
+            text-align: left;
+            display: none;
+        }
+
+        .result-title {
+            color: var(--orange-light);
+            font-size: 1.3rem;
+            margin-bottom: 15px;
+            text-align: center;
+        }
+
+        .result-item {
+            margin-bottom: 10px;
+            line-height: 1.6;
+        }
+
+        .result-item:last-child {
+            margin-bottom: 0;
+        }
+
+        .result-item strong {
+            color: var(--orange-light);
+        }
+
+        .list-item {
+            margin-left: 20px;
+        }
+
+        .modal {
+            display: none;
+            position: fixed;
+            z-index: 1000;
+            left: 0;
+            top: 0;
+            width: 100%;
+            height: 100%;
+            background-color: rgba(0, 0, 0, 0.7);
+        }
+
+        .modal-content {
+            background: var(--bg-card);
+            margin: 5% auto;
+            padding: 30px;
+            border-radius: 20px;
+            width: 80%;
+            max-width: 500px;
+            text-align: center;
+            border: 1px solid rgba(255, 140, 0, 0.3);
+            position: relative;
+            animation: zoomIn 0.3s ease;
+        }
+
+        @keyframes zoomIn {
+            from { transform: scale(0.8); opacity: 0; }
+            to { transform: scale(1); opacity: 1; }
+        }
+
+        .close {
+            color: var(--text-dim);
+            float: right;
+            font-size: 28px;
+            font-weight: bold;
+            cursor: pointer;
+            position: absolute;
+            right: 15px;
+            top: 10px;
+        }
+
+        .close:hover {
+            color: var(--orange-primary);
+        }
+
+        .modal-result {
+            text-align: left;
+            margin-top: 20px;
+        }
+
+        .modal-result .result-item {
+            margin-bottom: 12px;
+        }
+
+        .modal-result .list-item {
+            margin-left: 25px;
+        }
+
+        .footer {
+            text-align: center;
+            margin-top: 30px;
+            color: var(--text-dim);
+            font-size: 0.9rem;
+        }
+
+        @media (max-width: 768px) {
+            .check-in-container {
+                padding: 30px 20px;
+            }
+            
+            .modal-content {
+                width: 90%;
+                margin: 10% auto;
+                padding: 20px;
+            }
+        }
+    </style>
+</head>
+<body>
+    <div class="container">
+        <div class="check-in-container">
+            <div class="header">
+                <img src="logo.png" alt="松鼠星球 Logo" class="logo">
+                <h1>松鼠签到</h1>
+                <p>叮咚！该签到了！快来松鼠星球签到吧！</p>
+            </div>
+            
+            <button class="check-in-btn" id="checkInBtn">开始签到</button>
+            
+            <div class="result-container" id="resultContainer">
+                <h3 class="result-title">签到结果</h3>
+                <div id="resultContent"></div>
+            </div>
+            
+            <div class="footer">
+                <p>© <script>document.write(new Date().getFullYear())</script> 松鼠星球 | 用代码编织梦想，用创意点亮星空</p>
+            </div>
+        </div>
+    </div>
+    
+    <!-- 签到结果模态框 -->
+    <div id="resultModal" class="modal">
+        <div class="modal-content">
+            <span class="close">&times;</span>
+            <h2 style="color: var(--orange-light); margin-bottom: 20px;">签到结果</h2>
+            <div class="modal-result" id="modalResultContent"></div>
+        </div>
+    </div>
+
+    <script>
+        // 获取当前日期的随机种子
+        function getDaySeed() {
+            const now = new Date();
+            // 使用年月日作为种子，确保每天的随机结果相同
+            return now.getFullYear() * 10000 + (now.getMonth() + 1) * 100 + now.getDate();
+        }
+        
+        // 生成基于种子的随机数
+        function seededRandom(seed) {
+            // 简单的线性同余生成器
+            seed = (seed * 9301 + 49297) % 233280;
+            return seed / 233280;
+        }
+        
+        // 获取当前季节
+        function getCurrentSeason() {
+            const month = new Date().getMonth() + 1;
+            if (month >= 3 && month <= 5) return 'spring'; // 春季
+            if (month >= 6 && month <= 8) return 'summer'; // 夏季
+            if (month >= 9 && month <= 11) return 'autumn'; // 秋季
+            return 'winter'; // 冬季
+        }
+        
+        // 初始化天气
+        function initializeWeather(seed) {
+            const season = getCurrentSeason();
+            let weatherList = [];
+            
+            // 根据季节设定天气概率
+            switch (season) {
+                case 'spring':
+                    weatherList = [
+                        { name: '春雨绵绵', probability: 0.2 },
+                        { name: '春风和煦', probability: 0.3 },
+                        { name: '春雷滚滚', probability: 0.1 },
+                        { name: '阳光明媚', probability: 0.25 },
+                        { name: '多云转晴', probability: 0.15 }
+                    ];
+                    break;
+                case 'summer':
+                    weatherList = [
+                        { name: '烈日炎炎', probability: 0.3 },
+                        { name: '雷阵雨', probability: 0.25 },
+                        { name: '阴云密布', probability: 0.15 },
+                        { name: '清风徐来', probability: 0.2 },
+                        { name: '暴雨如注', probability: 0.1 }
+                    ];
+                    break;
+                case 'autumn':
+                    weatherList = [
+                        { name: '秋高气爽', probability: 0.3 },
+                        { name: '秋风萧瑟', probability: 0.2 },
+                        { name: '细雨缠绵', probability: 0.2 },
+                        { name: '天高云淡', probability: 0.2 },
+                        { name: '雾气朦胧', probability: 0.1 }
+                    ];
+                    break;
+                case 'winter':
+                    weatherList = [
+                        { name: '雪花纷飞', probability: 0.3 },
+                        { name: '寒风刺骨', probability: 0.25 },
+                        { name: '冰天雪地', probability: 0.2 },
+                        { name: '晴空万里', probability: 0.15 },
+                        { name: '雾凇沆砀', probability: 0.1 }
+                    ];
+                    break;
+            }
+            
+            // 使用随机种子选择天气
+            let randomValue = seededRandom(seed);
+            let cumulativeProbability = 0;
+            
+            for (const weather of weatherList) {
+                cumulativeProbability += weather.probability;
+                if (randomValue < cumulativeProbability) {
+                    return weather.name;
+                }
+            }
+            
+            return weatherList[0].name; // 默认返回第一个
+        }
+        
+        // 初始化事件列表
+        function initializeEvents(seed) {
+            const events = [
+                '松鼠们正在收集代码松子',
+                '算法使徒在调试程序',
+                '美术祭司绘制新的UI界面',
+                '灵感冒险者探索新的代码迷宫',
+                '数据工匠修复了数据库',
+                'AI助手学习了新技能',
+                '松果仓库增加了新的功能',
+                '系统管理员更新了服务器',
+                '代码审查员发现了bug',
+                '前端工程师修复了样式',
+                '后端开发者优化了性能',
+                '测试工程师编写了测试用例',
+                '项目经理规划了新功能',
+                '设计师创作了新界面',
+                '开发者修复了安全漏洞'
+            ];
+            
+            // 使用种子生成随机索引
+            const randomIndex = Math.floor(seededRandom(seed) * events.length);
+            return events[randomIndex];
+        }
+        
+        // 初始化运势
+        function initializeFortune() {
+            const fortunes = [
+                '小吉',
+                '中吉',
+                '大吉',
+                '小凶',
+                '中凶',
+                '大凶'
+            ];
+            
+            // 使用当前时间戳（精确到秒）作为种子
+            const timestampSeed = Math.floor(Date.now() / 1000); // 转换为秒级时间戳
+            const randomIndex = Math.floor(seededRandom(timestampSeed) * fortunes.length);
+            return fortunes[randomIndex];
+        }
+        
+        // 根据天气、事件、运势生成宜忌列表
+        function generateGuidance(weather, event, fortune) {
+            const timestampSeed = Date.now();
+            let randomValue = seededRandom(timestampSeed);
+            
+            // 宜事项
+            const yiList = [];
+            if (weather.includes('晴') || weather.includes('和煦')) {
+                yiList.push('外出交流', '学习新知识', '拓展人脉');
+            } else if (weather.includes('雨') || weather.includes('雪')) {
+                yiList.push('室内活动', '深度思考', '整理代码');
+            } else if (weather.includes('风')) {
+                yiList.push('创新思维', '灵感创作', '代码重构');
+            } else if (weather.includes('雷') || weather.includes('暴')) {
+                yiList.push('安全第一', '风险控制', '备份数据');
+            } else {
+                yiList.push('保持常态', '稳步前进', '持续学习');
+            }
+            
+            if (event.includes('调试') || event.includes('修复')) {
+                yiList.push('解决问题', '提升技能', '精益求精');
+            } else if (event.includes('学习') || event.includes('AI')) {
+                yiList.push('学习新知识', '探索新技术', '提升能力');
+            } else if (event.includes('设计') || event.includes('创作')) {
+                yiList.push('创意发挥', '美学追求', '用户体验');
+            }
+            
+            // 添加一些通用的宜事项
+            yiList.push('编写文档', '代码审查', '技术分享');
+            
+            // 忌事项
+            const jiList = [];
+            if (weather.includes('晴') || weather.includes('和煦')) {
+                jiList.push('暴晒', '过度劳累', '忽视防晒');
+            } else if (weather.includes('雨') || weather.includes('雪')) {
+                jiList.push('外出', '淋雨', '匆忙行动');
+            } else if (weather.includes('风')) {
+                jiList.push('粗心大意', '急躁冒进', '忽视细节');
+            } else if (weather.includes('雷') || weather.includes('暴')) {
+                jiList.push('冒险尝试', '激进操作', '忽视安全');
+            } else {
+                jiList.push('随意更改', '匆忙决定', '忽视流程');
+            }
+            
+            if (event.includes('调试') || event.includes('修复')) {
+                jiList.push('忽略错误', '急躁修复', '不测再测');
+            } else if (event.includes('学习') || event.includes('AI')) {
+                jiList.push('浅尝辄止', '半途而废', '不求甚解');
+            } else if (event.includes('设计') || event.includes('创作')) {
+                jiList.push('忽视用户', '缺乏创新', '粗糙处理');
+            }
+            
+            // 添加一些通用的忌事项
+            jiList.push('熬夜', '拖沓', '忽视测试');
+            
+            // 随机选择3个宜事项和3个忌事项（如果数量不足，则全部选择）
+            const selectedYi = [];
+            const selectedJi = [];
+            
+            // 随机选择宜事项
+            for (let i = 0; i < Math.min(3, yiList.length); i++) {
+                const randomIndex = Math.floor(seededRandom(timestampSeed + i) * yiList.length);
+                if (!selectedYi.includes(yiList[randomIndex])) {
+                    selectedYi.push(yiList[randomIndex]);
+                }
+            }
+            
+            // 如果随机选择不足3个，则补充剩余
+            for (let i = 0; i < yiList.length && selectedYi.length < 3; i++) {
+                if (!selectedYi.includes(yiList[i])) {
+                    selectedYi.push(yiList[i]);
+                }
+            }
+            
+            // 随机选择忌事项
+            for (let i = 0; i < Math.min(3, jiList.length); i++) {
+                const randomIndex = Math.floor(seededRandom(timestampSeed + i + 10) * jiList.length);
+                if (!selectedJi.includes(jiList[randomIndex])) {
+                    selectedJi.push(jiList[randomIndex]);
+                }
+            }
+            
+            // 如果随机选择不足3个，则补充剩余
+            for (let i = 0; i < jiList.length && selectedJi.length < 3; i++) {
+                if (!selectedJi.includes(jiList[i])) {
+                    selectedJi.push(jiList[i]);
+                }
+            }
+            
+            return { yi: selectedYi, ji: selectedJi };
+        }
+        
+        // 获取连续签到次数（模拟）
+        function getConsecutiveDays(seed) {
+            // 使用随机种子生成一个连续天数
+            const randomValue = seededRandom(seed);
+            return Math.floor(randomValue * 10) + 1; // 1-10天
+        }
+        
+        // 显示签到结果
+        function showCheckInResult() {
+            const seed = getDaySeed();
+            
+            // 获取当天的随机内容
+            const weather = initializeWeather(seed);
+            const event = initializeEvents(seed);
+            const fortune = initializeFortune();
+            const guidance = generateGuidance(weather, event, fortune);
+            
+            // 模拟用户是否登录（这里我们模拟一个已登录状态）
+            const isLoggedIn = true; // 模拟用户已登录
+            const consecutiveDays = getConsecutiveDays(seed);
+            
+            // 构建签到结果
+            let resultHTML = '<div class="result-item">签到成功！</div>';
+            
+            if (isLoggedIn) {
+                resultHTML += `<div class="result-item"><strong>连续签到第 ${consecutiveDays} 次</strong></div>`;
+            }
+            
+            resultHTML += `<div class="result-item">松鼠星球今日天气：<strong>${weather}</strong></div>`;
+            resultHTML += `<div class="result-item">松鼠星球今日事件：<strong>${event}</strong></div>`;
+            resultHTML += `<div class="result-item">今日运势：<strong>${fortune}</strong></div>`;
+            resultHTML += `<div class="result-item"><strong>宜：</strong></div>`;
+            resultHTML += '<ul class="list-item">';
+            guidance.yi.forEach(item => {
+                resultHTML += `<li>${item}</li>`;
+            });
+            resultHTML += '</ul>';
+            resultHTML += `<div class="result-item"><strong>忌：</strong></div>`;
+            resultHTML += '<ul class="list-item">';
+            guidance.ji.forEach(item => {
+                resultHTML += `<li>${item}</li>`;
+            });
+            resultHTML += '</ul>';
+            
+            // 显示结果模态框
+            document.getElementById('modalResultContent').innerHTML = resultHTML;
+            document.getElementById('resultModal').style.display = 'block';
+        }
+        
+        // 页面加载完成后初始化
+        document.addEventListener('DOMContentLoaded', function() {
+            // 签到按钮事件
+            document.getElementById('checkInBtn').addEventListener('click', showCheckInResult);
+            
+            // 模态框关闭事件
+            document.querySelector('.close').addEventListener('click', function() {
+                document.getElementById('resultModal').style.display = 'none';
+            });
+            
+            // 点击模态框外部关闭
+            window.addEventListener('click', function(event) {
+                const modal = document.getElementById('resultModal');
+                if (event.target === modal) {
+                    modal.style.display = 'none';
+                }
+            });
+        });
+    </script>
+</body>
+</html>

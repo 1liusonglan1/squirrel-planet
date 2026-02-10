@@ -1,0 +1,327 @@
+<!DOCTYPE html>
+<html lang="zh-CN">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>星球故事 | 松鼠星球</title>
+    <link rel="icon" type="image/png" href="logo.png">
+    <meta name="theme-color" content="#FF8C00">
+    <style>
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+        }
+
+        :root {
+            --orange-primary: #FF8C00;
+            --orange-light: #FFA500;
+            --orange-dark: #FF6B00;
+            --orange-glow: #FFB347;
+            --bg-dark: #0D1117;
+            --bg-card: #161B22;
+            --text-light: #F0F6FC;
+            --text-dim: #8B949E;
+            --code-green: #00FF9D;
+            --accent-purple: #A855F7;
+        }
+
+        body {
+            font-family: 'Noto Sans SC', -apple-system, BlinkMacSystemFont, sans-serif;
+            background: var(--bg-dark);
+            color: var(--text-light);
+            overflow-x: hidden;
+        }
+
+        @font-face {
+            font-family: "HuXiaoBoNanShenTi";
+            src: url("HuXiaoBoNanShenTi.ttf");
+        }
+
+        .nav {
+            position: fixed;
+            top: 0;
+            left: 0;
+            width: 100%;
+            padding: 20px 50px;
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            z-index: 1000;
+            background: linear-gradient(180deg, rgba(13,17,23,0.9) 0%, transparent 100%);
+            backdrop-filter: blur(10px);
+        }
+
+        .nav-left {
+            display: flex;
+            align-items: center;
+        }
+
+        .nav-logo {
+            display: flex;
+            align-items: center;
+            gap: 10px;
+            font-family: 'HuXiaoBoNanShenTi';
+            font-size: 1.6rem;
+            background: linear-gradient(135deg, var(--orange-light), var(--orange-primary), var(--orange-glow));
+            -webkit-background-clip: text;
+            -webkit-text-fill-color: transparent;
+            background-clip: text;
+            text-shadow: 0 0 30px rgba(255, 140, 0, 0.3);
+            cursor: pointer;
+            text-decoration: none;
+            transition: transform 0.3s ease;
+        }
+
+        .nav-logo:hover {
+            transform: scale(1.05);
+        }
+
+        .nav-logo img {
+            width: 40px;
+            height: 40px;
+            object-fit: contain;
+            filter: drop-shadow(0 0 10px rgba(255, 140, 0, 0.5));
+        }
+
+        .nav-back {
+            color: var(--text-light);
+            text-decoration: none;
+            font-weight: 500;
+            padding: 10px 25px;
+            border: 2px solid var(--orange-primary);
+            border-radius: 50px;
+            transition: all 0.3s ease;
+        }
+
+        .nav-back:hover {
+            background: rgba(255, 140, 0, 0.1);
+        }
+
+        section {
+            padding: 120px 50px;
+            position: relative;
+            z-index: 1;
+        }
+
+        .section-title {
+            font-family: 'HuXiaoBoNanShenTi';
+            font-size: 2.8rem;
+            text-align: center;
+            margin-bottom: 60px;
+            background: linear-gradient(135deg, var(--orange-light), var(--orange-primary));
+            -webkit-background-clip: text;
+            -webkit-text-fill-color: transparent;
+            background-clip: text;
+        }
+
+        .story-section {
+            background: linear-gradient(180deg, var(--bg-dark) 0%, var(--bg-card) 50%, var(--bg-dark) 100%);
+            min-height: 100vh;
+        }
+
+        .story-grid {
+            display: grid;
+            grid-template-columns: repeat(auto-fit, minmax(350px, 1fr));
+            gap: 40px;
+            max-width: 1400px;
+            margin: 0 auto;
+        }
+
+        .story-card {
+            background: var(--bg-card);
+            border-radius: 20px;
+            padding: 40px;
+            border: 1px solid rgba(255, 140, 0, 0.1);
+            transition: all 0.4s ease;
+            position: relative;
+            overflow: hidden;
+        }
+
+        .story-card::before {
+            content: '';
+            position: absolute;
+            top: 0;
+            left: 0;
+            right: 0;
+            height: 4px;
+            background: linear-gradient(90deg, var(--orange-dark), var(--orange-glow), var(--orange-dark));
+            opacity: 0;
+            transition: opacity 0.3s ease;
+        }
+
+        .story-card:hover {
+            transform: translateY(-10px);
+            border-color: rgba(255, 140, 0, 0.3);
+            box-shadow: 0 20px 60px rgba(255, 140, 0, 0.15);
+        }
+
+        .story-card:hover::before {
+            opacity: 1;
+        }
+
+        .story-card-icon {
+            font-size: 3rem;
+            margin-bottom: 20px;
+            display: block;
+        }
+
+        .story-card h3 {
+            font-size: 1.5rem;
+            margin-bottom: 15px;
+            color: var(--orange-light);
+        }
+
+        .story-card p {
+            color: var(--text-dim);
+            line-height: 1.8;
+            font-size: 1rem;
+        }
+
+        .story-card .highlight {
+            color: var(--code-green);
+            font-family: 'Courier New', monospace;
+        }
+
+        .footer {
+            background: var(--bg-card);
+            padding: 60px 50px 40px;
+            text-align: center;
+        }
+
+        .footer::before {
+            content: '';
+            position: absolute;
+            top: 0;
+            left: 0;
+            right: 0;
+            height: 2px;
+            background: linear-gradient(90deg, transparent, var(--orange-primary), var(--orange-glow), var(--orange-primary), transparent);
+        }
+
+        .footer-logo {
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            gap: 12px;
+            font-family: 'HuXiaoBoNanShenTi';
+            font-size: 1.5rem;
+            background: linear-gradient(135deg, var(--orange-light), var(--orange-primary));
+            -webkit-background-clip: text;
+            -webkit-text-fill-color: transparent;
+            background-clip: text;
+            margin-bottom: 20px;
+        }
+
+        .footer-logo img {
+            width: 36px;
+            height: 36px;
+            object-fit: contain;
+        }
+
+        .footer p {
+            color: var(--text-dim);
+        }
+
+        @media (max-width: 768px) {
+            .nav {
+                padding: 15px 20px;
+            }
+
+            section {
+                padding: 100px 20px;
+            }
+
+            .section-title {
+                font-size: 2rem;
+            }
+
+            .story-grid {
+                grid-template-columns: 1fr;
+            }
+        }
+    </style>
+</head>
+<body>
+    <nav class="nav">
+        <div class="nav-left">
+            <a href="index.html" class="nav-logo">
+                <img src="logo.png" alt="松鼠星球 Logo">
+                <span>松鼠星球</span>
+            </a>
+        </div>
+        <a href="index.html" class="nav-back">← 返回首页</a>
+    </nav>
+
+    <section class="story-section">
+        <h2 class="section-title">📜 星球故事</h2>
+        <div class="story-grid">
+            <div class="story-card">
+                <span class="story-card-icon">🌌</span>
+                <h3>起源传说</h3>
+                <p>
+                    很久很久以前，在银河系的第三悬臂边缘，漂浮着一枚形似松鼠的迷幻图腾。
+                    当光子穿过它的机械松果鳞片，折射出的是——百万行跃动的二进制诗篇。
+                    从此，<span class="highlight">「代码囤积者」</span>在此安家。
+                </p>
+            </div>
+            <div class="story-card">
+                <span class="story-card-icon">💻</span>
+                <h3>算法使徒</h3>
+                <p>
+                    算法使徒用 <span class="highlight">C++</span> 凿刻数学圣殿，美术祭司以像素重构空间维度，
+                    灵感通灵者吞吐着量子态的创意星屑。我们相信：
+                    <br><br>
+                    <em>"当代码遇见艺术，魔法便开始发生。"</em>
+                </p>
+            </div>
+            <div class="story-card">
+                <span class="story-card-icon">🛠️</span>
+                <h3>技术生态</h3>
+                <p>
+                    Python 编织的数据藤蔓爬满云层，Java 架构的坚果农场永不停转，
+                    C/C++ 浇筑的松塔核心日夜轰鸣。每一粒代码松子都在等待破壳的奇点，
+                    期待着被某个疯狂的程序员发现并编译。
+                </p>
+            </div>
+            <div class="story-card">
+                <span class="story-card-icon">🎨</span>
+                <h3>创作共振</h3>
+                <p>
+                    欢迎携带以下星图密钥的生物登陆：解构过 NP 完全问题的图灵松鼠、
+                    能绘制四维分形的达芬奇花栗鼠、脑神经与 AI 直连的灵感仓鼠、
+                    惯用递归思维囤积知识的智械地鼠。
+                </p>
+            </div>
+            <div class="story-card">
+                <span class="story-card-icon">🧠</span>
+                <h3>神经接口</h3>
+                <p>
+                    用蒙特卡洛算法破解松鼠魔法阵，在 Shader 着色迷雾中追捕创意闪电，
+                    将神经脉冲编译成开源世界的松脂。让我们在环形山 Git 仓库共筑奇观！
+                    <br><br>
+                    <span class="highlight">git commit -m "用想象力改变世界"</span>
+                </p>
+            </div>
+            <div class="story-card">
+                <span class="story-card-icon">📊</span>
+                <h3>星球数据</h3>
+                <p>
+                    SSS 级知识坚果储备量：<span class="highlight">1.3EB</span><br>
+                    跨维度协作项目孵化中：<span class="highlight">4个</span><br>
+                    当前的松果超频倍率：<span class="highlight"><script>document.write(Math.floor(Math.random() * 901) + 100)</script></span><br><br>
+                    星门坐标：<span class="highlight">1liusonglan1.github.io</span>
+                </p>
+            </div>
+        </div>
+    </section>
+
+    <footer class="footer">
+        <div class="footer-logo">
+            <img src="logo.png" alt="松鼠星球 Logo">
+            <span>松鼠星球</span>
+        </div>
+        <p>🐿️ 用代码编织梦想，用创意点亮星空 🐿️</p>
+    </footer>
+</body>
+</html>

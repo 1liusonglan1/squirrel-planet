@@ -1,0 +1,1731 @@
+<!DOCTYPE html>
+<html lang="zh-CN">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>松鼠星球 | 代码与艺术缠绕的魔法秘境</title>
+    <!-- Favicon -->
+    <link rel="icon" type="image/png" href="logo.png">
+    <meta name="theme-color" content="#FF8C00">
+    <style>
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+        }
+
+        :root {
+            --orange-primary: #FF8C00;
+            --orange-light: #FFA500;
+            --orange-dark: #FF6B00;
+            --orange-glow: #FFB347;
+            --bg-dark: #0D1117;
+            --bg-card: #161B22;
+            --text-light: #F0F6FC;
+            --text-dim: #8B949E;
+            --code-green: #00FF9D;
+            --accent-purple: #A855F7;
+            --accent-pink: #EC4899;
+        }
+
+        html {
+            scroll-behavior: smooth;
+        }
+
+        body {
+            font-family: 'Noto Sans SC', -apple-system, BlinkMacSystemFont, sans-serif;
+            background: var(--bg-dark);
+            color: var(--text-light);
+            overflow-x: hidden;
+            cursor: default;
+        }
+
+        /* Custom Scrollbar */
+        ::-webkit-scrollbar {
+            width: 10px;
+        }
+
+        ::-webkit-scrollbar-track {
+            background: var(--bg-dark);
+        }
+
+        ::-webkit-scrollbar-thumb {
+            background: linear-gradient(180deg, var(--orange-primary), var(--orange-dark));
+            border-radius: 5px;
+        }
+
+        /* Navigation */
+        .nav {
+            position: fixed;
+            top: 0;
+            left: 0;
+            width: 100%;
+            padding: 20px 50px;
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            z-index: 1000;
+            background: linear-gradient(180deg, rgba(13,17,23,0.9) 0%, transparent 100%);
+            backdrop-filter: blur(10px);
+            transition: all 0.3s ease;
+        }
+        
+        .nav-left {
+            display: flex;
+            align-items: center;
+        }
+        
+        .nav-logo {
+            display: flex;
+            align-items: center;
+            gap: 10px;
+            font-family: 'HuXiaoBoNanShenTi';
+            font-size: 1.6rem;
+            background: linear-gradient(135deg, var(--orange-light), var(--orange-primary), var(--orange-glow));
+            -webkit-background-clip: text;
+            -webkit-text-fill-color: transparent;
+            background-clip: text;
+            text-shadow: 0 0 30px rgba(255, 140, 0, 0.3);
+            cursor: pointer;
+            transition: transform 0.3s ease;
+        }
+
+        .nav-logo img {
+            width: 40px;
+            height: 40px;
+            object-fit: contain;
+            filter: drop-shadow(0 0 10px rgba(255, 140, 0, 0.5));
+            transition: transform 0.3s ease, filter 0.3s ease;
+        }
+
+        .nav-logo:hover {
+            transform: scale(1.05);
+        }
+
+        .nav-logo:hover img {
+            transform: scale(1.1);
+            filter: drop-shadow(0 0 20px rgba(255, 140, 0, 0.8));
+        }
+        
+        .nav-right {
+            display: flex;
+            align-items: center;
+            gap: 40px;
+        }
+
+        @font-face {
+            font-family: "HuXiaoBoNanShenTi";
+            src: url("HuXiaoBoNanShenTi.ttf");
+        }
+
+
+
+        .nav-links {
+            display: flex;
+            gap: 40px;
+            list-style: none;
+        }
+
+        .nav-links a {
+            color: var(--text-light);
+            text-decoration: none;
+            font-weight: 500;
+            position: relative;
+            padding: 5px 0;
+            transition: color 0.3s ease;
+        }
+
+        .nav-links a::after {
+            content: '';
+            position: absolute;
+            bottom: 0;
+            left: 0;
+            width: 0;
+            height: 2px;
+            background: linear-gradient(90deg, var(--orange-primary), var(--orange-glow));
+            transition: width 0.3s ease;
+        }
+
+        .nav-links a:hover {
+            color: var(--orange-primary);
+        }
+
+        .nav-links a:hover::after {
+            width: 100%;
+        }
+
+        /* Hero Section */
+        .hero {
+            min-height: 100vh;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            position: relative;
+            z-index: 1;
+            padding: 100px 50px;
+            overflow: hidden;
+        }
+
+        .hero-bg {
+            position: absolute;
+            top: 50%;
+            left: 50%;
+            transform: translate(-50%, -50%);
+            width: 600px;
+            height: 600px;
+            background: radial-gradient(circle, rgba(255,140,0,0.15) 0%, transparent 70%);
+            border-radius: 50%;
+            animation: pulse 4s ease-in-out infinite;
+        }
+
+        @keyframes pulse {
+            0%, 100% { transform: translate(-50%, -50%) scale(1); opacity: 0.5; }
+            50% { transform: translate(-50%, -50%) scale(1.2); opacity: 0.8; }
+        }
+
+        .hero-content {
+            text-align: center;
+            max-width: 900px;
+        }
+
+        .hero-squirrel {
+            width: 120px;
+            height: 120px;
+            margin-bottom: 30px;
+            display: inline-block;
+            filter: drop-shadow(0 0 20px rgba(255, 140, 0, 0.5));
+            transition: transform 0.3s ease, filter 0.3s ease;
+            cursor: pointer;
+        }
+
+        .hero-squirrel:hover {
+            transform: scale(1.05);
+            filter: drop-shadow(0 0 30px rgba(255, 140, 0, 0.8));
+        }
+
+        @keyframes bounce {
+            0%, 100% { transform: translateY(0); }
+            50% { transform: translateY(-20px); }
+        }
+
+        .hero-title {
+            font-family: 'HuXiaoBoNanShenTi';
+            font-size: 4rem;
+            font-weight: 900;
+            background: linear-gradient(135deg, var(--orange-light), var(--orange-primary), var(--orange-glow), var(--orange-light));
+            background-size: 300% 300%;
+            -webkit-background-clip: text;
+            -webkit-text-fill-color: transparent;
+            background-clip: text;
+            animation: gradientFlow 5s ease infinite, glow 3s ease-in-out infinite alternate;
+            margin-bottom: 20px;
+        }
+
+        @keyframes gradientFlow {
+            0% { background-position: 0% 50%; }
+            50% { background-position: 100% 50%; }
+            100% { background-position: 0% 50%; }
+        }
+
+        @keyframes glow {
+            from { filter: drop-shadow(0 0 10px rgba(255, 140, 0, 0.5)); }
+            to { filter: drop-shadow(0 0 30px rgba(255, 140, 0, 0.8)); }
+        }
+
+        .hero-subtitle {
+            font-size: 1.5rem;
+            color: var(--text-dim);
+            margin-bottom: 40px;
+            line-height: 1.8;
+        }
+
+        .hero-code {
+            background: var(--bg-card);
+            padding: 25px 40px;
+            border-radius: 15px;
+            font-family: 'Courier New', 'Noto Sans SC', monospace;
+            font-size: 1.1rem;
+            margin: 40px auto;
+            max-width: 600px;
+            border: 1px solid rgba(255, 140, 0, 0.2);
+            position: relative;
+            overflow: hidden;
+            text-align: left;
+            line-height: 1.6;
+        }
+
+        .hero-code::before {
+            content: '';
+            position: absolute;
+            top: 0;
+            left: 0;
+            right: 0;
+            height: 3px;
+            background: linear-gradient(90deg, var(--orange-primary), var(--orange-glow), var(--orange-primary));
+        }
+
+        .hero-code .keyword { color: var(--code-green); }
+        .hero-code .string { color: var(--orange-light); }
+        .hero-code .comment { color: var(--text-dim); font-style: italic; }
+
+        .hero-cta {
+            display: flex;
+            gap: 20px;
+            justify-content: center;
+            margin-top: 50px;
+            flex-wrap: wrap;
+        }
+
+        .btn {
+            padding: 15px 40px;
+            border-radius: 50px;
+            font-size: 1.1rem;
+            font-weight: 600;
+            text-decoration: none;
+            cursor: pointer;
+            transition: all 0.3s ease;
+            border: none;
+            position: relative;
+            overflow: hidden;
+        }
+
+        .btn-primary {
+            background: linear-gradient(135deg, var(--orange-primary), var(--orange-dark));
+            color: white;
+            box-shadow: 0 10px 30px rgba(255, 140, 0, 0.3);
+        }
+
+        .btn-primary:hover {
+            transform: translateY(-3px);
+            box-shadow: 0 15px 40px rgba(255, 140, 0, 0.5);
+        }
+
+        .btn-secondary {
+            background: transparent;
+            color: var(--orange-primary);
+            border: 2px solid var(--orange-primary);
+        }
+
+        .btn-secondary:hover {
+            background: rgba(255, 140, 0, 0.1);
+            transform: translateY(-3px);
+        }
+
+        .scroll-indicator {
+            position: absolute;
+            bottom: 40px;
+            left: 50%;
+            transform: translateX(-50%);
+            animation: scrollBounce 2s ease-in-out infinite;
+        }
+
+        .scroll-indicator span {
+            display: block;
+            width: 30px;
+            height: 50px;
+            border: 2px solid var(--orange-primary);
+            border-radius: 25px;
+            position: relative;
+        }
+
+        .scroll-indicator span::before {
+            content: '';
+            position: absolute;
+            top: 8px;
+            left: 50%;
+            transform: translateX(-50%);
+            width: 6px;
+            height: 6px;
+            background: var(--orange-primary);
+            border-radius: 50%;
+            animation: scrollDot 2s ease-in-out infinite;
+        }
+
+        @keyframes scrollDot {
+            0%, 100% { top: 8px; opacity: 1; }
+            50% { top: 30px; opacity: 0.3; }
+        }
+
+        @keyframes scrollBounce {
+            0%, 100% { transform: translateX(-50%) translateY(0); }
+            50% { transform: translateX(-50%) translateY(10px); }
+        }
+
+        /* Section Styles */
+        section {
+            padding: 120px 50px;
+            position: relative;
+            z-index: 1;
+        }
+
+        .section-title {
+            font-family: 'HuXiaoBoNanShenTi';
+            font-size: 2.8rem;
+            text-align: center;
+            margin-bottom: 60px;
+            background: linear-gradient(135deg, var(--orange-light), var(--orange-primary));
+            -webkit-background-clip: text;
+            -webkit-text-fill-color: transparent;
+            background-clip: text;
+        }
+
+        /* Story Section */
+        .story-section {
+            background: linear-gradient(180deg, var(--bg-dark) 0%, var(--bg-card) 50%, var(--bg-dark) 100%);
+        }
+
+        .story-grid {
+            display: grid;
+            grid-template-columns: repeat(auto-fit, minmax(350px, 1fr));
+            gap: 40px;
+            max-width: 1400px;
+            margin: 0 auto;
+        }
+
+        .story-card {
+            background: var(--bg-card);
+            border-radius: 20px;
+            padding: 40px;
+            border: 1px solid rgba(255, 140, 0, 0.1);
+            transition: all 0.4s ease;
+            position: relative;
+            overflow: hidden;
+        }
+
+        .story-card::before {
+            content: '';
+            position: absolute;
+            top: 0;
+            left: 0;
+            right: 0;
+            height: 4px;
+            background: linear-gradient(90deg, var(--orange-dark), var(--orange-glow), var(--orange-dark));
+            opacity: 0;
+            transition: opacity 0.3s ease;
+        }
+
+        .story-card:hover {
+            transform: translateY(-10px);
+            border-color: rgba(255, 140, 0, 0.3);
+            box-shadow: 0 20px 60px rgba(255, 140, 0, 0.15);
+        }
+
+        .story-card:hover::before {
+            opacity: 1;
+        }
+
+        .story-card-icon {
+            font-size: 3rem;
+            margin-bottom: 20px;
+            display: block;
+        }
+
+        .story-card h3 {
+            font-size: 1.5rem;
+            margin-bottom: 15px;
+            color: var(--orange-light);
+        }
+
+        .story-card p {
+            color: var(--text-dim);
+            line-height: 1.8;
+            font-size: 1rem;
+        }
+
+        .story-card .highlight {
+            color: var(--code-green);
+            font-family: 'Courier New', monospace;
+        }
+
+        /* Philosophy Section */
+        .philosophy-section {
+            background: var(--bg-card);
+            position: relative;
+            overflow: hidden;
+        }
+
+        .philosophy-section::before {
+            content: '';
+            position: absolute;
+            top: -50%;
+            right: -20%;
+            width: 800px;
+            height: 800px;
+            background: radial-gradient(circle, rgba(255, 140, 0, 0.05) 0%, transparent 70%);
+            border-radius: 50%;
+        }
+
+        .philosophy-content {
+            max-width: 1000px;
+            margin: 0 auto;
+            text-align: center;
+        }
+
+        .philosophy-motto {
+            font-family: 'HuXiaoBoNanShenTi';
+            font-size: 3rem;
+            margin-bottom: 40px;
+            background: linear-gradient(90deg, var(--orange-light), var(--code-green), var(--orange-light));
+            background-size: 200% auto;
+            -webkit-background-clip: text;
+            -webkit-text-fill-color: transparent;
+            background-clip: text;
+            animation: shine 3s linear infinite;
+        }
+
+        @keyframes shine {
+            to { background-position: 200% center; }
+        }
+
+        .philosophy-description {
+            font-size: 1.2rem;
+            line-height: 2;
+            color: var(--text-dim);
+            margin-bottom: 60px;
+        }
+
+        .philosophy-grid {
+            display: grid;
+            grid-template-columns: repeat(3, 1fr);
+            gap: 30px;
+            margin-top: 60px;
+        }
+
+        .philosophy-item {
+            padding: 30px;
+            background: rgba(255, 140, 0, 0.05);
+            border-radius: 15px;
+            border: 1px solid rgba(255, 140, 0, 0.1);
+            transition: all 0.3s ease;
+        }
+
+        .philosophy-item:hover {
+            background: rgba(255, 140, 0, 0.1);
+            transform: scale(1.02);
+        }
+
+        .philosophy-item h4 {
+            color: var(--orange-primary);
+            font-size: 1.3rem;
+            margin-bottom: 15px;
+        }
+
+        .philosophy-item p {
+            color: var(--text-dim);
+            font-size: 0.95rem;
+            line-height: 1.7;
+        }
+
+        /* Projects Section */
+        .projects-section {
+            background: var(--bg-dark);
+        }
+
+        .projects-grid {
+            display: grid;
+            grid-template-columns: repeat(auto-fit, minmax(400px, 1fr));
+            gap: 50px;
+            max-width: 1200px;
+            margin: 0 auto;
+        }
+
+        .project-card {
+            background: var(--bg-card);
+            border-radius: 25px;
+            padding: 50px 40px;
+            position: relative;
+            overflow: hidden;
+            border: 1px solid rgba(255, 140, 0, 0.15);
+            transition: all 0.4s ease;
+        }
+
+        .project-card::before {
+            content: '';
+            position: absolute;
+            top: 0;
+            left: 0;
+            right: 0;
+            height: 5px;
+            background: linear-gradient(90deg, var(--orange-dark), var(--orange-glow), var(--accent-purple));
+        }
+
+        .project-card:hover {
+            transform: translateY(-10px) scale(1.02);
+            box-shadow: 0 30px 60px rgba(255, 140, 0, 0.2);
+        }
+
+        .project-icon {
+            font-size: 4rem;
+            margin-bottom: 25px;
+            display: block;
+        }
+
+        .project-card h3 {
+            font-size: 1.8rem;
+            margin-bottom: 15px;
+            background: linear-gradient(135deg, var(--orange-light), var(--orange-primary));
+            -webkit-background-clip: text;
+            -webkit-text-fill-color: transparent;
+            background-clip: text;
+        }
+
+        .project-card .tag {
+            display: inline-block;
+            padding: 5px 15px;
+            background: rgba(255, 140, 0, 0.15);
+            color: var(--orange-light);
+            border-radius: 20px;
+            font-size: 0.85rem;
+            margin-bottom: 20px;
+            margin-right: 10px;
+        }
+
+        .project-card p {
+            color: var(--text-dim);
+            line-height: 1.8;
+            margin-bottom: 30px;
+        }
+
+        .project-features {
+            list-style: none;
+            margin-bottom: 30px;
+        }
+
+        .project-features li {
+            padding: 8px 0;
+            color: var(--text-light);
+            display: flex;
+            align-items: center;
+            gap: 10px;
+        }
+
+        .project-features li::before {
+            content: '◆';
+            color: var(--orange-primary);
+        }
+
+        .project-btn {
+            display: inline-flex;
+            align-items: center;
+            gap: 10px;
+            padding: 15px 35px;
+            background: linear-gradient(135deg, var(--orange-primary), var(--orange-dark));
+            color: white;
+            text-decoration: none;
+            border-radius: 50px;
+            font-weight: 600;
+            transition: all 0.3s ease;
+            border: none;
+            cursor: pointer;
+            font-size: 1rem;
+        }
+
+        .project-btn:hover {
+            transform: translateY(-3px);
+            box-shadow: 0 15px 40px rgba(255, 140, 0, 0.4);
+        }
+
+        .project-btn:active {
+            transform: translateY(-1px) scale(0.98);
+            box-shadow: 0 8px 25px rgba(255, 140, 0, 0.3);
+        }
+
+        /* Ripple Effect */
+        .project-btn {
+            position: relative;
+            overflow: hidden;
+        }
+
+        .project-btn::after {
+            content: '';
+            position: absolute;
+            top: 50%;
+            left: 50%;
+            width: 0;
+            height: 0;
+            background: rgba(255, 255, 255, 0.3);
+            border-radius: 50%;
+            transform: translate(-50%, -50%);
+            transition: width 0.4s ease, height 0.4s ease, opacity 0.4s ease;
+            opacity: 0;
+            pointer-events: none;
+        }
+
+        .project-btn:active::after {
+            width: 300px;
+            height: 300px;
+            opacity: 1;
+            transition: width 0.2s ease, height 0.2s ease, opacity 0.2s ease;
+        }
+
+        .project-btn.clicked::after {
+            opacity: 0;
+            width: 300px;
+            height: 300px;
+            transition: opacity 0.3s ease 0.2s;
+        }
+
+        .project-btn .arrow {
+            transition: transform 0.3s ease;
+        }
+
+        .project-btn:hover .arrow {
+            transform: translateX(5px);
+        }
+
+        /* Button shine animation */
+        @keyframes btnShine {
+            0% { left: -100%; }
+            50%, 100% { left: 100%; }
+        }
+
+        .project-btn::before {
+            content: '';
+            position: absolute;
+            top: 0;
+            left: -100%;
+            width: 50%;
+            height: 100%;
+            background: linear-gradient(
+                90deg,
+                transparent,
+                rgba(255, 255, 255, 0.2),
+                transparent
+            );
+            transform: skewX(-15deg);
+            animation: btnShine 3s ease-in-out infinite;
+            pointer-events: none;
+        }
+
+        /* Team Section */
+        .team-section {
+            background: linear-gradient(180deg, var(--bg-card) 0%, var(--bg-dark) 100%);
+        }
+
+        .team-grid {
+            display: grid;
+            grid-template-columns: repeat(auto-fit, minmax(280px, 1fr));
+            gap: 40px;
+            max-width: 1200px;
+            margin: 0 auto;
+        }
+
+        .team-card {
+            background: var(--bg-card);
+            border-radius: 20px;
+            padding: 40px 30px;
+            text-align: center;
+            border: 1px solid rgba(255, 140, 0, 0.1);
+            transition: all 0.4s ease;
+        }
+
+        .team-card:hover {
+            transform: translateY(-10px);
+            border-color: rgba(255, 140, 0, 0.3);
+        }
+
+        .team-avatar {
+            width: 120px;
+            height: 120px;
+            border-radius: 50%;
+            margin: 0 auto 25px;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            font-size: 4rem;
+            background: linear-gradient(135deg, rgba(255, 140, 0, 0.2), rgba(255, 100, 0, 0.1));
+            border: 3px solid var(--orange-primary);
+            position: relative;
+        }
+
+        .team-avatar::after {
+            content: '';
+            position: absolute;
+            top: -5px;
+            left: -5px;
+            right: -5px;
+            bottom: -5px;
+            border-radius: 50%;
+            border: 2px solid var(--orange-glow);
+            opacity: 0;
+            transition: opacity 0.3s ease;
+        }
+
+        .team-card:hover .team-avatar::after {
+            opacity: 1;
+            animation: rotate 10s linear infinite;
+        }
+
+        @keyframes rotate {
+            from { transform: rotate(0deg); }
+            to { transform: rotate(360deg); }
+        }
+
+        .team-card h3 {
+            font-size: 1.4rem;
+            margin-bottom: 10px;
+            color: var(--orange-light);
+        }
+
+        .team-card .role {
+            color: var(--orange-primary);
+            font-size: 0.9rem;
+            margin-bottom: 15px;
+        }
+
+        .team-card p {
+            color: var(--text-dim);
+            font-size: 0.9rem;
+            line-height: 1.6;
+        }
+
+        /* Footer */
+        .footer {
+            background: var(--bg-card);
+            padding: 80px 50px 40px;
+            position: relative;
+            overflow: hidden;
+        }
+
+        .footer::before {
+            content: '';
+            position: absolute;
+            top: 0;
+            left: 0;
+            right: 0;
+            height: 2px;
+            background: linear-gradient(90deg, transparent, var(--orange-primary), var(--orange-glow), var(--orange-primary), transparent);
+        }
+
+        .footer-content {
+            max-width: 1200px;
+            margin: 0 auto;
+            display: grid;
+            grid-template-columns: 2fr 1fr 1fr 1fr;
+            gap: 60px;
+            margin-bottom: 60px;
+        }
+
+        .footer-brand {
+            max-width: 350px;
+        }
+
+        .footer-logo {
+            display: flex;
+            align-items: center;
+            gap: 12px;
+            font-family: 'HuXiaoBoNanShenTi', cursive;
+            font-size: 1.8rem;
+            background: linear-gradient(135deg, var(--orange-light), var(--orange-primary));
+            -webkit-background-clip: text;
+            -webkit-text-fill-color: transparent;
+            background-clip: text;
+            margin-bottom: 20px;
+        }
+
+        .footer-logo img {
+            width: 36px;
+            height: 36px;
+            object-fit: contain;
+            filter: drop-shadow(0 0 10px rgba(255, 140, 0, 0.5));
+        }
+
+        .footer-brand p {
+            color: var(--text-dim);
+            line-height: 1.8;
+        }
+
+        .footer-title {
+            color: var(--text-light);
+            font-size: 1.1rem;
+            margin-bottom: 25px;
+            font-weight: 600;
+        }
+
+        .footer-links {
+            list-style: none;
+        }
+
+        .footer-links li {
+            margin-bottom: 12px;
+        }
+
+        .footer-links a {
+            color: var(--text-dim);
+            text-decoration: none;
+            transition: color 0.3s ease;
+        }
+
+        .footer-links a:hover {
+            color: var(--orange-primary);
+        }
+
+        .footer-bottom {
+            text-align: center;
+            padding-top: 40px;
+            border-top: 1px solid rgba(255, 140, 0, 0.1);
+        }
+
+        .footer-bottom p {
+            color: var(--text-dim);
+            font-size: 0.9rem;
+        }
+
+        .footer-bottom .squirrel {
+            font-size: 1.5rem;
+            margin: 0 10px;
+            display: inline-block;
+            animation: bounce 1s ease-in-out infinite;
+        }
+
+        /* Responsive Design */
+        @media (max-width: 1024px) {
+            .footer-content {
+                grid-template-columns: 1fr 1fr;
+            }
+            
+            .philosophy-grid {
+                grid-template-columns: 1fr;
+            }
+        }
+
+        @media (max-width: 768px) {
+            .nav {
+                padding: 15px 20px;
+            }
+
+            .nav-links {
+                display: none;
+            }
+
+            section {
+                padding: 80px 20px;
+            }
+
+            .hero-title {
+                font-size: 2.5rem;
+            }
+
+            .hero-subtitle {
+                font-size: 1.1rem;
+            }
+
+            .hero-code {
+                font-size: 0.9rem;
+                padding: 20px;
+            }
+
+            .section-title {
+                font-size: 2rem;
+            }
+
+            .philosophy-motto {
+                font-size: 2rem;
+            }
+
+            .story-grid,
+            .projects-grid {
+                grid-template-columns: 1fr;
+            }
+
+            .footer-content {
+                grid-template-columns: 1fr;
+                gap: 40px;
+            }
+        }
+
+        /* Animation Classes */
+        .fade-in {
+            opacity: 0;
+            transform: translateY(30px);
+            transition: all 0.6s ease;
+        }
+
+        .fade-in.visible {
+            opacity: 1;
+            transform: translateY(0);
+        }
+
+        /* Glitch Effect */
+        .glitch {
+            position: relative;
+        }
+
+        .glitch::before,
+        .glitch::after {
+            content: attr(data-text);
+            position: absolute;
+            top: 0;
+            left: 0;
+            width: 100%;
+            height: 100%;
+        }
+
+        .glitch::before {
+            left: 2px;
+            text-shadow: -2px 0 var(--accent-purple);
+            clip: rect(24px, 550px, 90px, 0);
+            animation: glitch-anim 3s infinite linear alternate-reverse;
+        }
+
+        .glitch::after {
+            left: -2px;
+            text-shadow: -2px 0 var(--accent-pink);
+            clip: rect(85px, 550px, 140px, 0);
+            animation: glitch-anim 2s infinite linear alternate-reverse;
+        }
+
+        @keyframes glitch-anim {
+            0% { clip: rect(14px, 9999px, 127px, 0); }
+            20% { clip: rect(68px, 9999px, 4px, 0); }
+            40% { clip: rect(36px, 9999px, 87px, 0); }
+            60% { clip: rect(92px, 9999px, 56px, 0); }
+            80% { clip: rect(8px, 9999px, 112px, 0); }
+            100% { clip: rect(52px, 9999px, 73px, 0); }
+        }
+
+        /* Loading Animation */
+        .loader {
+            position: fixed;
+            top: 0;
+            left: 0;
+            width: 100%;
+            height: 100%;
+            background: var(--bg-dark);
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            z-index: 9999;
+            transition: opacity 0.5s ease, visibility 0.5s ease;
+        }
+
+        .loader.hidden {
+            opacity: 0;
+            visibility: hidden;
+        }
+
+        .loader-content {
+            text-align: center;
+        }
+
+        .loader-squirrel {
+            width: 80px;
+            height: 80px;
+            animation: bounce 0.5s ease-in-out infinite;
+            filter: drop-shadow(0 0 15px rgba(255, 140, 0, 0.6));
+        }
+
+        .loader-text {
+            margin-top: 20px;
+            color: var(--orange-primary);
+            font-size: 1.2rem;
+        }
+
+        .loader-bar {
+            width: 200px;
+            height: 4px;
+            background: var(--bg-card);
+            border-radius: 2px;
+            margin-top: 20px;
+            overflow: hidden;
+        }
+
+        .loader-bar::after {
+            content: '';
+            display: block;
+            width: 50%;
+            height: 100%;
+            background: linear-gradient(90deg, var(--orange-primary), var(--orange-glow));
+            animation: loading 1s ease-in-out infinite;
+        }
+
+        @keyframes loading {
+            0% { transform: translateX(-100%); }
+            100% { transform: translateX(300%); }
+        }
+        
+        /* Login Section */
+        .login-section {
+            background: linear-gradient(180deg, var(--bg-dark) 0%, var(--bg-card) 100%);
+            padding: 120px 50px;
+            position: relative;
+            z-index: 1;
+        }
+
+        .login-container {
+            max-width: 800px;
+            margin: 0 auto;
+            text-align: center;
+        }
+
+        .login-card {
+            background: var(--bg-card);
+            border-radius: 25px;
+            padding: 60px 40px;
+            position: relative;
+            overflow: hidden;
+            border: 1px solid rgba(255, 140, 0, 0.15);
+            transition: all 0.4s ease;
+            display: flex;
+            justify-content: center;
+            align-items: center;
+        }
+
+        .login-card::before {
+            content: '';
+            position: absolute;
+            top: 0;
+            left: 0;
+            right: 0;
+            height: 5px;
+            background: linear-gradient(90deg, var(--orange-dark), var(--orange-glow), var(--accent-purple));
+        }
+
+        .login-card:hover {
+            transform: translateY(-10px) scale(1.02);
+            box-shadow: 0 30px 60px rgba(255, 140, 0, 0.2);
+        }
+
+        .login-content h3 {
+            font-size: 2rem;
+            margin-bottom: 20px;
+            background: linear-gradient(135deg, var(--orange-light), var(--orange-primary));
+            -webkit-background-clip: text;
+            -webkit-text-fill-color: transparent;
+            background-clip: text;
+        }
+
+        .login-content p {
+            color: var(--text-dim);
+            font-size: 1.2rem;
+            line-height: 1.8;
+            margin-bottom: 30px;
+        }
+
+        /* Authentication Modal */
+        .auth-buttons {
+            display: flex;
+            gap: 15px;
+        }
+        
+        .modal-overlay {
+            position: fixed;
+            top: 0;
+            left: 0;
+            width: 100%;
+            height: 100%;
+            background: rgba(0, 0, 0, 0.7);
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            z-index: 9999;
+            opacity: 0;
+            visibility: hidden;
+            transition: all 0.3s ease;
+        }
+        
+        .modal-overlay.active {
+            opacity: 1;
+            visibility: visible;
+        }
+        
+        .modal-content {
+            background: var(--bg-card);
+            border-radius: 20px;
+            width: 90%;
+            max-width: 450px;
+            box-shadow: 0 25px 50px rgba(255, 140, 0, 0.2);
+            border: 1px solid rgba(255, 140, 0, 0.2);
+            position: relative;
+            overflow: hidden;
+            transform: scale(0.7);
+            transition: transform 0.3s ease;
+        }
+        
+        .modal-overlay.active .modal-content {
+            transform: scale(1);
+        }
+        
+        .modal-header {
+            padding: 25px 30px;
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            border-bottom: 1px solid rgba(255, 140, 0, 0.1);
+            position: relative;
+        }
+        
+        .modal-header h2 {
+            margin: 0;
+            color: var(--text-light);
+            font-size: 1.5rem;
+        }
+        
+        .close-btn {
+            font-size: 1.8rem;
+            cursor: pointer;
+            color: var(--text-dim);
+            transition: color 0.3s ease;
+            width: 30px;
+            height: 30px;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+        }
+        
+        .close-btn:hover {
+            color: var(--orange-primary);
+        }
+        
+        .modal-body {
+            padding: 30px;
+        }
+        
+        .auth-toggle {
+            display: flex;
+            background: var(--bg-dark);
+            border-radius: 50px;
+            padding: 5px;
+            margin-bottom: 25px;
+        }
+        
+        .auth-option {
+            flex: 1;
+            text-align: center;
+            padding: 12px;
+            cursor: pointer;
+            border-radius: 50px;
+            transition: all 0.3s ease;
+            font-weight: 500;
+            color: var(--text-dim);
+        }
+        
+        .auth-option.active {
+            background: linear-gradient(135deg, var(--orange-primary), var(--orange-dark));
+            color: white;
+            box-shadow: 0 5px 15px rgba(255, 140, 0, 0.3);
+        }
+        
+        .auth-form .form-group {
+            margin-bottom: 20px;
+        }
+        
+        .auth-form label {
+            display: block;
+            margin-bottom: 8px;
+            color: var(--text-light);
+            font-weight: 500;
+        }
+        
+        .auth-form input {
+            width: 100%;
+            padding: 14px;
+            border-radius: 10px;
+            border: 1px solid rgba(255, 140, 0, 0.2);
+            background: var(--bg-dark);
+            color: var(--text-light);
+            font-size: 1rem;
+            transition: all 0.3s ease;
+        }
+        
+        .auth-form input:focus {
+            outline: none;
+            border-color: var(--orange-primary);
+            box-shadow: 0 0 0 3px rgba(255, 140, 0, 0.2);
+        }
+        
+        .auth-form .btn {
+            width: 100%;
+            margin-top: 10px;
+        }
+        
+        .auth-message {
+            margin-top: 20px;
+            padding: 12px;
+            border-radius: 8px;
+            text-align: center;
+            display: none;
+        }
+        
+        .auth-message.success {
+            background: rgba(0, 255, 157, 0.1);
+            border: 1px solid rgba(0, 255, 157, 0.3);
+            color: var(--code-green);
+        }
+        
+        .auth-message.error {
+            background: rgba(236, 72, 153, 0.1);
+            border: 1px solid rgba(236, 72, 153, 0.3);
+            color: var(--accent-pink);
+        }
+        
+        .auth-message.show {
+            display: block;
+        }
+        
+        /* 响应式设计 */
+        @media (max-width: 768px) {
+            .auth-buttons {
+                display: none; /* 在移动设备上隐藏认证按钮，将通过菜单访问 */
+            }
+            
+            .modal-content {
+                width: 95%;
+                margin: 0 20px;
+            }
+            
+            .modal-header {
+                padding: 20px;
+            }
+            
+            .modal-body {
+                padding: 20px;
+            }
+        }
+    </style>
+</head>
+<body>
+    <!-- Loading Screen -->
+    <div class="loader" id="loader">
+        <div class="loader-content">
+            <img src="logo.png" alt="松鼠星球 Logo" class="loader-squirrel">
+            <div class="loader-text">正在建立量子纠缠链接...</div>
+            <div class="loader-bar"></div>
+        </div>
+    </div>
+    <!-- Navigation -->
+    <nav class="nav">
+        <div class="nav-left">
+            <div class="nav-logo">
+                <img src="logo.png" alt="松鼠星球 Logo">
+                <span>松鼠星球</span>
+            </div>
+        </div>
+        <div class="nav-right">
+            <ul class="nav-links">
+                <li><a href="story.html">星球故事</a></li>
+                <li><a href="#philosophy">核心理念</a></li>
+                <li><a href="#projects">星球创意</a></li>
+                <li><a href="#login">登陆星球</a></li>
+            </ul>
+        </div>
+    </nav>
+    <!-- Hero Section -->
+    <section class="hero" id="hero">
+        <div class="hero-bg"></div>
+        <div class="hero-content">
+            <img src="logo.png" alt="松鼠星球 Logo" class="hero-squirrel" id="heroLogo">
+            <h1 class="hero-title glitch" data-text="松鼠星球">松鼠星球</h1>
+            <p class="hero-subtitle">
+                在银河系的第三悬臂边缘，漂浮着一枚形似松鼠的迷幻图腾<br>
+                这里正是「代码囤积者」的终极巢穴
+            </p>
+            <div class="hero-code">
+<span class="keyword">const</span> <span class="string">squirrelPlanet</span> = {<br>
+&nbsp;&nbsp;<span class="comment">// 代码与艺术缠绕的魔法秘境</span><br>
+&nbsp;&nbsp;<span class="string">"mission"</span>: <span class="string">"写奇奇怪怪但有用的东西"</span>,<br>
+&nbsp;&nbsp;<span class="string">"status"</span>: <span class="string">"用代码实现梦想"</span>,<br>
+&nbsp;&nbsp;<span class="string">"welcome"</span>: <span class="keyword">true</span><br>
+};
+            </div>
+            <div class="hero-cta">
+                <a href="#projects" class="btn btn-primary">🚀 探索项目</a>
+                <a href="#story" class="btn btn-secondary">📖 了解更多</a>
+            </div>
+        </div>
+        <div class="scroll-indicator">
+            <span></span>
+        </div>
+    </section>
+    <!-- Philosophy Section -->
+    <section class="philosophy-section" id="philosophy">
+        <h2 class="section-title fade-in">💡 核心理念</h2>
+        <div class="philosophy-content">
+            <p class="philosophy-motto fade-in">「写奇奇怪怪但有用的东西」</p>
+            <p class="philosophy-description fade-in">
+                松鼠星球是一个团队（即使只有几个人），我们相信代码不仅仅是工具，
+                更是实现梦想的魔法棒。我们不按常理出牌，但我们的作品绝对有用；
+                我们充满奇思妙想，但每一个项目都经过精心打磨。
+                <br><br>
+                在这里，混乱与秩序并存，代码与艺术缠绕，想象力与实用性共舞。
+            </p>
+            <div class="philosophy-grid">
+                <div class="philosophy-item fade-in">
+                    <h4>🎭 奇奇怪怪</h4>
+                    <p>我们不做无聊的东西。每一个项目都充满创意和想象力，从不按套路出牌，永远给你惊喜。</p>
+                </div>
+                <div class="philosophy-item fade-in">
+                    <h4>🔧 有用处</h4>
+                    <p>创意不等于花哨。我们确保每一个“奇怪”的想法都能解决实际问题，让世界变得更好。</p>
+                </div>
+                <div class="philosophy-item fade-in">
+                    <h4>🚀 制作与实现</h4>
+                    <p>想法再好，不实现等于零。我们用扎实的代码能力，将天马行空变成可用的产品。</p>
+                </div>
+                <div class="philosophy-item fade-in">
+                    <h4>🌟 追逐梦想</h4>
+                    <p>我们相信技术可以改变世界。每一次代码提交，都是向着梦想迈进的一小步。</p>
+                </div>
+                <div class="philosophy-item fade-in">
+                    <h4>🤝 开源共享</h4>
+                    <p>知识属于所有人。我们积极参与开源社区，让创意自由流动，让代码创造价值。</p>
+                </div>
+                <div class="philosophy-item fade-in">
+                    <h4>🎉 快乐编码</h4>
+                    <p>编程应该是快乐的。我们享受创造的乐趣，也希望我们的作品能给用户带来快乐。</p>
+                </div>
+            </div>
+        </div>
+    </section>
+    <!-- Projects Section -->
+    <section class="projects-section" id="projects">
+        <h2 class="section-title fade-in">🚀 星球创意</h2>
+        <div class="projects-grid">
+            <div class="project-card fade-in">
+                <span class="project-icon">📝</span>
+                <h3>Tanex Script</h3>
+                <div>
+                    <span class="tag">编程语言</span>
+                    <span class="tag">易学</span>
+                    <span class="tag">创新</span>
+                </div>
+                <p>
+                    一门充满想象力的领域专用语言，为特定场景设计的优雅解决方案。
+                    打破传统编程语言的束缚，用更直观的方式表达复杂逻辑。
+                </p>
+                <ul class="project-features">
+                    <li>简洁的语法设计，易于学习和使用</li>
+                    <li>针对特定领域优化，性能出色</li>
+                    <li>强大的扩展能力，满足定制需求</li>
+                    <li>活跃的社区，持续迭代更新</li>
+                </ul>
+                <a href="tanex_script/tanex-script.html" class="project-btn">
+                    访问 Tanex Script <span class="arrow">→</span>
+                </a>
+            </div>
+            <div class="project-card fade-in">
+                <span class="project-icon">🐝</span>
+                <h3>New Bee Lang</h3>
+                <div>
+                    <span class="tag">编程语言</span>
+                    <span class="tag">esoteric lang</span>
+                    <span class="tag">蜜蜂主题</span>
+                </div>
+                <p>
+                    折磨觉得编程简单的人，用一只蜂蜜，折磨无数程序员。
+                    打破传统编程语言的束缚，用蜂蜜的方式表达复杂逻辑。
+                </p>
+                <ul class="project-features">
+                    <li>语法简洁直观，但使用困难，充满挑战</li>
+                    <li>丰富的学习资源和教程</li>
+                    <li>强大的错误提示，助你快速成长</li>
+                    <li>活跃的社区</li>
+                </ul>
+                <a href="new_bee_lang/new_bee_lang.html" class="project-btn">
+                    礼貌问候小蜜蜂 <span class="arrow">→</span>
+                </a>
+            </div>
+            <div class="project-card fade-in">
+                <span class="project-icon">📅</span>
+                <h3>松鼠签到</h3>
+                <div>
+                    <span class="tag">每日签到</span>
+                    <span class="tag">有趣</span>
+                    <span class="tag">创意</span>
+                </div>
+                <p>
+                    叮咚！该签到了！快来松鼠星球签到吧！
+                </p>
+                <ul class="project-features">
+                    <li>获取松鼠星球实况</li>
+                    <li>强大的天气预报能力</li>
+                    <li>有趣的签到机制</li>
+                </ul>
+                <a href="check-in/check-in.html" class="project-btn">
+                    开始签到  <span class="arrow">→</span>
+                </a>
+            </div>
+            <div class="project-card fade-in">
+                <span class="project-icon">🎮</span>
+                <h3>松鼠游戏库</h3>
+                <div>
+                    <span class="tag">游戏</span>
+                    <span class="tag">优质</span>
+                    <span class="tag">松鼠游戏</span>
+                </div>
+                <p>
+                    松鼠们精心创作的游戏都带这里哦！
+                    在这里，快乐不断！
+                </p>
+                <ul class="project-features">
+                    <li>丰富的游戏</li>
+                    <li>强大的游戏引擎</li>
+                    <li>有趣的游戏机制</li>
+                </ul>
+                <a href="games/games.html" class="project-btn">
+                    马上就开始游戏  <span class="arrow">→</span>
+                </a>
+            </div>
+            <div class="project-card fade-in">
+                <span class="project-icon">📜</span>
+                <h3>星球故事</h3>
+                <div>
+                    <span class="tag">故事</span>
+                    <span class="tag">传说</span>
+                    <span class="tag">历史</span>
+                </div>
+                <p>
+                    探索松鼠星球的起源传说，了解算法使徒的传奇故事，
+                    发现代码与艺术缠绕的魔法秘境。
+                </p>
+                <ul class="project-features">
+                    <li>起源传说 - 银河系第三悬臂的故事</li>
+                    <li>技术生态 - 多语言协作的奇观</li>
+                    <li>星球数据 - 神秘的松鼠星球统计</li>
+                </ul>
+                <a href="story.html" class="project-btn">
+                    阅读星球故事 <span class="arrow">→</span>
+                </a>
+            </div>
+        </div>
+    </section>
+    
+    <!-- Login Section -->
+    <section class="login-section" id="login">
+        <h2 class="section-title fade-in">🔑 登陆星球</h2>
+        <div class="login-container">
+            <div class="login-card">
+                <div class="login-content">
+                    <h3>加入松鼠星球社区</h3>
+                    <p>享受个性化体验，安全的登录和注册系统，保护您的账户信息。</p>
+                    <a href="login_or_signup/login_or_signup.html" class="project-btn">
+                        登陆星球 <span class="arrow">→</span>
+                    </a>
+                </div>
+            </div>
+        </div>
+    </section>
+    </section>
+    <!-- Footer -->
+    <footer class="footer">
+        <div class="footer-content">
+            <div class="footer-brand">
+                <div class="footer-logo">
+                    <img src="logo.png" alt="松鼠星球 Logo">
+                    <span>松鼠星球</span>
+                </div>
+                <p>
+                    代码与艺术缠绕的魔法秘境。我们是代码囤积者，我们用代码实现梦想。
+                    写奇奇怪怪但有用的东西，让世界变得更有趣！
+                </p>
+            </div>
+            <div>
+                <h4 class="footer-title">快速链接</h4>
+                <ul class="footer-links">
+                    <li><a href="story.html">星球故事</a></li>
+                    <li><a href="#philosophy">核心理念</a></li>
+                    <li><a href="#projects">项目展示</a></li>
+                </ul>
+            </div>
+            <div>
+                <h4 class="footer-title">项目</h4>
+                <ul class="footer-links">
+                    <li><a href="tanex_script/tanex-script.html">Tanex Script</a></li>
+                    <li><a href="new_bee_lang/new_bee_lang.html">New Bee Lang</a></li>
+                    <li><a href="#login">登陆星球</a></li>
+                </ul>
+            </div>
+            <div>
+                <h4 class="footer-title">联系</h4>
+                <ul class="footer-links">
+                    <li><a href="#">GitHub</a></li>
+                    <li><a href="#">联系我们</a></li>
+                    <li><a href="#">加入我们</a></li>
+                </ul>
+            </div>
+        </div>
+        <div class="footer-bottom">
+            <p>
+                <span class="squirrel">🐿️</span>
+                &copy; <script>document.write(new Date().getFullYear())</script> 松鼠星球 | 用代码编织梦想，用创意点亮星空
+                <span class="squirrel">🐿️</span>
+            </p>
+        </div>
+    </footer>
+    <script>
+        // Loading Screen
+        window.addEventListener('load', () => {
+            setTimeout(() => {
+                document.getElementById('loader').classList.add('hidden');
+            }, 1500);
+        });
+        // 生成粒子
+        function createParticles() {
+            const container = document.getElementById('particles');
+            const particleCount = 50;
+            for (let i = 0; i < particleCount; i++) {
+                const particle = document.createElement('div');
+                particle.className = 'particle';
+                particle.style.left = Math.random() * 100 + '%';
+                particle.style.animationDelay = Math.random() * 15 + 's';
+                particle.style.animationDuration = (Math.random() * 10 + 10) + 's';
+                // 随机大小
+                const size = Math.random() * 4 + 2;
+                particle.style.width = size + 'px';
+                particle.style.height = size + 'px';
+                // 随机颜色
+                const colors = ['#FF8C00', '#FFA500', '#FFB347', '#00FF9D', '#A855F7'];
+                particle.style.background = colors[Math.floor(Math.random() * colors.length)];
+                container.appendChild(particle);
+            }
+        }
+        // Scroll Animation Observer
+        function setupScrollAnimations() {
+            const observer = new IntersectionObserver((entries) => {
+                entries.forEach(entry => {
+                    if (entry.isIntersecting) {
+                        entry.target.classList.add('visible');
+                    }
+                });
+            }, {
+                threshold: 0.1,
+                rootMargin: '0px 0px -50px 0px'
+            });
+
+            document.querySelectorAll('.fade-in').forEach(el => {
+                observer.observe(el);
+            });
+        }
+        // Smooth Scroll
+        document.querySelectorAll('a[href^="#"]').forEach(anchor => {
+            anchor.addEventListener('click', function(e) {
+                e.preventDefault();
+                const target = document.querySelector(this.getAttribute('href'));
+                if (target) {
+                    target.scrollIntoView({
+                        behavior: 'smooth',
+                        block: 'start'
+                    });
+                }
+            });
+        });
+        // Navigation Background on Scroll
+        function setupNavScroll() {
+            const nav = document.querySelector('.nav');
+            window.addEventListener('scroll', () => {
+                if (window.scrollY > 100) {
+                    nav.style.background = 'rgba(13, 17, 23, 0.95)';
+                    nav.style.backdropFilter = 'blur(20px)';
+                } else {
+                    nav.style.background = 'linear-gradient(180deg, rgba(13,17,23,0.9) 0%, transparent 100%)';
+                    nav.style.backdropFilter = 'blur(10px)';
+                }
+            });
+        }
+        // Interactive Logo Click
+        function setupLogoClick() {
+            const logo = document.getElementById('heroLogo');
+            if (logo) {
+                logo.addEventListener('click', () => {
+                    logo.style.animation = 'none';
+                    setTimeout(() => {
+                        logo.style.animation = 'bounce 0.5s ease-in-out 3';
+                    }, 10);
+                    // 创建浮动的橡果
+                    for (let i = 0; i < 5; i++) {
+                        const acorn = document.createElement('div');
+                        acorn.textContent = '🌰';
+                        acorn.style.position = 'fixed';
+                        acorn.style.left = (logo.getBoundingClientRect().left + 50) + 'px';
+                        acorn.style.top = (logo.getBoundingClientRect().top + 50) + 'px';
+                        acorn.style.fontSize = '20px';
+                        acorn.style.pointerEvents = 'none';
+                        acorn.style.zIndex = '9999';
+                        acorn.style.transition = 'all 1s ease-out';
+                        document.body.appendChild(acorn);
+                        setTimeout(() => {
+                            acorn.style.transform = `translate(${(Math.random() - 0.5) * 200}px, ${Math.random() * 200 + 100}px) rotate(${Math.random() * 360}deg)`;
+                            acorn.style.opacity = '0';
+                        }, 10);
+                        setTimeout(() => {
+                            acorn.remove();
+                        }, 1000);
+                    }
+                });
+            }
+        }
+        // Parallax Effect for Hero
+        function setupParallax() {
+            const hero = document.querySelector('.hero');
+            const heroBg = document.querySelector('.hero-bg');
+            window.addEventListener('scroll', () => {
+                const scrolled = window.scrollY;
+                if (scrolled < window.innerHeight) {
+                    heroBg.style.transform = `translate(-50%, -50%) translateY(${scrolled * 0.3}px)`;
+                }
+            });
+        }
+        // 按钮点击动画
+        function setupButtonAnimations() {
+            const buttons = document.querySelectorAll('.project-btn');
+            buttons.forEach(btn => {
+                btn.addEventListener('click', function(e) {
+                    // 添加点击类以实现波纹效果
+                    this.classList.add('clicked');
+                    
+                    // 在点击位置创建粒子效果
+                    createButtonParticles(e.clientX, e.clientY);
+                    
+                    // 动画结束后移除类
+                    setTimeout(() => {
+                        this.classList.remove('clicked');
+                    }, 400);
+                });
+            });
+        }
+        // Create particles on button click
+        function createButtonParticles(x, y) {
+            const colors = ['#FF8C00', '#FFA500', '#FFB347', '#00FF9D', '#A855F7'];
+            for (let i = 0; i < 8; i++) {
+                const particle = document.createElement('div');
+                particle.style.cssText = `
+                    position: fixed;
+                    left: ${x}px;
+                    top: ${y}px;
+                    width: ${Math.random() * 8 + 4}px;
+                    height: ${Math.random() * 8 + 4}px;
+                    background: ${colors[Math.floor(Math.random() * colors.length)]};
+                    border-radius: 50%;
+                    pointer-events: none;
+                    z-index: 9999;
+                    transform: translate(${(Math.random() - 0.5) * 100}px, ${(Math.random() - 0.5) * 100}px);
+                    opacity: 1;
+                    transition: all 0.5s ease-out;
+                `;
+                document.body.appendChild(particle);
+                
+                setTimeout(() => {
+                    particle.style.transform = `translate(${(Math.random() - 0.5) * 200}px, ${(Math.random() - 0.5) * 200}px) rotate(${Math.random() * 360}deg)`;
+                    particle.style.opacity = '0';
+                }, 10);
+                
+                setTimeout(() => {
+                    particle.remove();
+                }, 500);
+            }
+        }
+        // 初始化
+        document.addEventListener('DOMContentLoaded', () => {
+            // createParticles(); // 已禁用
+            setupScrollAnimations();
+            setupNavScroll();
+            setupLogoClick();
+            setupParallax();
+            setupButtonAnimations();
+            
+            // 认证模态框功能
+            setupAuthModal();
+        });
+    </script>
+</body>
+</html>

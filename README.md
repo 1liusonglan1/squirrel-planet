@@ -26,41 +26,6 @@
 - 平板端（768px - 1199px）
 - 移动端（< 768px）
 
-### 🖥️ 页面结构
-
-1. **加载页面** - 量子纠缠链接动画
-2. **英雄区** - Logo、标题、代码展示、CTA 按钮
-3. **星球故事** - 6 张创意故事卡片
-4. **核心理念** - 「写奇奇怪怪但有用的东西」座右铭
-5. **项目展示** - Tanex Script、New Bee Lang 项目入口
-6. **页脚** - 品牌信息、导航链接
-
-## 📦 技术栈
-
-- **HTML5** - 结构标记
-- **CSS3** - 样式与动画（无外部 CSS 框架）
-- **JavaScript** - 交互功能
-- **FontSource** - 思源黑体、站酷酷黑体
-- **Playwright** - 测试框架
-
-## 🧪 测试
-
-项目包含 Playwright 测试脚本：
-
-```bash
-# 运行测试
-cd squirrel-planet
-node test.js
-```
-
-测试内容包括：
-
-- 页面加载验证
-- 关键元素检查
-- 按钮交互测试
-- CSS 动画验证
-- 控制台错误检测
-
 ## 🎨 资源引用
 
 ### Logo 图片
@@ -68,11 +33,6 @@ node test.js
 - 文件：`logo.png`
 - 用途：导航栏、英雄区、加载页、页脚、浏览器图标
 - 推荐尺寸：正方形，建议 512x512 以上
-
-### 外部资源
-
-- 字体：jsDelivr CDN（国内可访问）
-- 图标：使用 CSS/HTML 实体，无需额外图片
 
 ## 📄 开源协议
 
@@ -90,7 +50,7 @@ node test.js
 ## 📞 联系
 
 - **网站** 1liusonglan1.github.io
-- **项目** Tanex Script、New Bee Lang
+- **项目** Tanex Script、New Bee Lang等
 
 ---
 

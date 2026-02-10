@@ -466,14 +466,7 @@
             
             return { yi: selectedYi, ji: selectedJi };
         }
-        
-        // 获取连续签到次数（模拟）
-        function getConsecutiveDays(seed) {
-            // 使用随机种子生成一个连续天数
-            const randomValue = seededRandom(seed);
-            return Math.floor(randomValue * 10) + 1; // 1-10天
-        }
-        
+
         // 显示签到结果
         function showCheckInResult() {
             const seed = getDaySeed();
@@ -484,16 +477,8 @@
             const fortune = initializeFortune();
             const guidance = generateGuidance(weather, event, fortune);
             
-            // 模拟用户是否登录（这里我们模拟一个已登录状态）
-            const isLoggedIn = true; // 模拟用户已登录
-            const consecutiveDays = getConsecutiveDays(seed);
-            
             // 构建签到结果
             let resultHTML = '<div class="result-item">签到成功！</div>';
-            
-            if (isLoggedIn) {
-                resultHTML += `<div class="result-item"><strong>连续签到第 ${consecutiveDays} 次</strong></div>`;
-            }
             
             resultHTML += `<div class="result-item">松鼠星球今日天气：<strong>${weather}</strong></div>`;
             resultHTML += `<div class="result-item">松鼠星球今日事件：<strong>${event}</strong></div>`;

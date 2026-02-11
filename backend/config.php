@@ -1,10 +1,10 @@
 <?php
 // 数据库配置
-define('DB_HOST', 'localhost');
+define('DB_HOST', 'sql100.infinityfree.com');
 define('DB_PORT', '3306');
-define('DB_NAME', 'ser172416977057'); // 使用提供的数据库账号作为数据库名
-define('DB_USER', 'ser172416977057'); // 数据库账号
-define('DB_PASS', '替换真实密码'); // 数据库密码 - 请替换为真实密码
+define('DB_NAME', 'if0_41121223_user_password_list'); // 数据库名
+define('DB_USER', 'if0_41121223'); // 数据库账号
+define('DB_PASS', '1qaz2wsxsongshu'); // 数据库密码
 
 // 创建数据库连接
 function getConnection() {

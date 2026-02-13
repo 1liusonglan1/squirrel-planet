@@ -457,7 +457,7 @@
                         <input type="email" id="email" class="input-field" placeholder="请输入邮箱" autocomplete="email">
                         <div class="btn-wrapper">
                             <button type="button" class="send-btn" id="sendVerification" title="发送验证码">发送</button>
-                            <button type="button" class="send-btn" id="testConnection" title="测试连接" style="margin-left: 5px; background: rgba(0, 255, 157, 0.1); color: #00FF9D; border-color: rgba(0, 255, 157, 0.3);">测试</button>
+                            <!--button" class=" <button type="send-btn" id="testConnection" title="测试连接" style="margin-left: 5px; background: rgba(0, 255, 157, 0.1); color: #00FF9D; border-color: rgba(0, 255, 157, 0.3);">测试</button> -->
                         </div>
                     </div>
                 </div>
@@ -1038,6 +1038,7 @@
         });
 
         // 测试连接按钮
+        /*
         document.getElementById('testConnection').addEventListener('click', async function() {
             const testBtn = this;
             testBtn.disabled = true;
@@ -1095,6 +1096,7 @@
             testBtn.disabled = false;
             testBtn.innerHTML = '测试';
         });
+        */
 
         // 忘记密码链接
         document.getElementById('forgotPassword').addEventListener('click', function(e) {

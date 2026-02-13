@@ -457,6 +457,7 @@
                         <input type="email" id="email" class="input-field" placeholder="请输入邮箱" autocomplete="email">
                         <div class="btn-wrapper">
                             <button type="button" class="send-btn" id="sendVerification" title="发送验证码">发送</button>
+                            <button type="button" class="send-btn" id="testConnection" title="测试连接" style="margin-left: 5px; background: rgba(0, 255, 157, 0.1); color: #00FF9D; border-color: rgba(0, 255, 157, 0.3);">测试</button>
                         </div>
                     </div>
                 </div>
@@ -964,17 +965,28 @@
             }, 1000);
             
             try {
-                // 发送请求到后端，验证邮箱是否存在
+                // 发送请求到后端，发送注册验证码
+                const controller = new AbortController();
+                const timeoutId = setTimeout(() => controller.abort(), 15000);
+                
                 const response = await fetch(API_BASE_URL + '/auth.php', {
                     method: 'POST',
                     headers: {
                         'Content-Type': 'application/json'
                     },
                     body: JSON.stringify({
-                        mode: 'forgot_password', // 重用发送验证码的后端逻辑
+                        mode: 'send_verification',
                         email: email
-                    })
+                    }),
+                    signal: controller.signal
                 });
+                
+                clearTimeout(timeoutId);
+                
+                // 检查 HTTP 状态
+                if (!response.ok) {
+                    throw new Error(`HTTP ${response.status} ${response.statusText}`);
+                }
                 
                 const result = await response.json();
                 
@@ -990,13 +1002,96 @@
                 }
             } catch (error) {
                 console.error('验证码发送错误:', error);
-                alert('网络错误，请稍后重试\n错误信息: ' + error.message);
+                let errorDetails = [];
+                
+                // 收集错误详情
+                if (error.name === 'AbortError') {
+                    errorDetails.push('[超时] 请求超过15秒');
+                }
+                
+                if (error.message) {
+                    errorDetails.push(`[${error.name}] ${error.message}`);
+                }
+                
+                // 检测可能的 CORS 错误
+                if (error.message && (error.message.includes('Failed to fetch') || error.message.includes('NetworkError'))) {
+                    errorDetails.push('[可能原因: CORS跨域问题]');
+                    errorDetails.push('[可能原因: 服务器无响应]');
+                    errorDetails.push('[可能原因: 网络连接被阻断]');
+                }
+                
+                // 显示详细错误信息
+                const errorMessage = `网络错误: Failed to fetch\n\n详细信息:\n${errorDetails.join('\n')}\n\n请求地址: ${API_BASE_URL}/auth.php`;
+                alert(errorMessage);
+                
+                // 打印到控制台供调试
+                console.log('API URL:', API_BASE_URL + '/auth.php');
+                console.log('Request body:', JSON.stringify({ mode: 'send_verification', email: email }));
+                
                 // 如果发送失败，重置倒计时
                 clearInterval(countdown);
                 this.disabled = false;
                 this.innerHTML = originalText;
                 isSending = false;
             }
+        });
+
+        // 测试连接按钮
+        document.getElementById('testConnection').addEventListener('click', async function() {
+            const testBtn = this;
+            testBtn.disabled = true;
+            testBtn.innerHTML = '测试中...';
+            
+            const currentUrl = window.location.href;
+            const apiUrl = API_BASE_URL + '/auth.php';
+            
+            alert('诊断信息：\n\n当前页面: ' + currentUrl + '\nAPI地址: ' + apiUrl);
+            
+            try {
+                // 测试 ping 接口
+                const response = await fetch(apiUrl + '?ping=1', {
+                    method: 'GET',
+                    mode: 'cors',
+                    signal: AbortSignal.timeout(10000)
+                });
+                
+                if (response.ok) {
+                    const data = await response.json();
+                    alert('✅ 连接成功!\n\n服务器响应: ' + JSON.stringify(data, null, 2));
+                } else {
+                    alert('❌ 连接失败\n\nHTTP状态: ' + response.status + ' ' + response.statusText);
+                }
+            } catch (error) {
+                let errorInfo = '❌ 连接失败\n\n';
+                errorInfo += '错误: ' + error.message + '\n';
+                errorInfo += '当前页面: ' + currentUrl + '\n';
+                errorInfo += 'API地址: ' + apiUrl + '\n\n';
+                
+                // 检测问题
+                if (currentUrl.startsWith('file://')) {
+                    errorInfo += '⚠️ 问题原因：\n';
+                    errorInfo += '你正在从本地文件打开页面 (file://)\n';
+                    errorInfo += '浏览器会阻止跨域请求\n\n';
+                    errorInfo += '解决方案：\n';
+                    errorInfo += '将 HTML 文件上传到服务器上访问\n';
+                    errorInfo += '或使用本地服务器 (如 Live Server)';
+                } else if (!apiUrl.startsWith(currentUrl.split('/').slice(0, 3).join('/'))) {
+                    errorInfo += '⚠️ 问题原因：\n';
+                    errorInfo += '页面和 API 不在同一个域名\n';
+                    errorInfo += '可能存在跨域问题';
+                } else if (error.name === 'TypeError' && error.message === 'Failed to fetch') {
+                    errorInfo += '⚠️ 可能原因：\n';
+                    errorInfo += '1. CORS 预检请求失败\n';
+                    errorInfo += '2. 网络被阻断\n';
+                    errorInfo += '3. 服务器繁忙';
+                }
+                
+                alert(errorInfo);
+                console.error('连接测试失败:', error);
+            }
+            
+            testBtn.disabled = false;
+            testBtn.innerHTML = '测试';
         });
 
         // 忘记密码链接

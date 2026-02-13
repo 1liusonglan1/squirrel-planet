@@ -22,3 +22,13 @@ CREATE TABLE IF NOT EXISTS email_verification (
     expires_at TIMESTAMP NOT NULL,
     INDEX idx_email (email)
 );
+
+-- 创建密码重置表
+CREATE TABLE IF NOT EXISTS password_resets (
+    id INT AUTO_INCREMENT PRIMARY KEY,
+    email VARCHAR(100) NOT NULL,
+    token VARCHAR(10) NOT NULL,
+    created_at TIMESTAMP DEFAULT CURRENT_TIMESTAMP,
+    expires_at TIMESTAMP NOT NULL,
+    INDEX idx_email (email)
+);

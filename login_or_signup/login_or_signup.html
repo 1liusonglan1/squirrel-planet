@@ -336,6 +336,131 @@
                 padding: 10px 0;
             }
         }
+
+        /* 自定义弹窗样式 */
+        .modal-overlay {
+            display: none;
+            position: fixed;
+            top: 0;
+            left: 0;
+            width: 100%;
+            height: 100%;
+            background: rgba(0, 0, 0, 0.7);
+            z-index: 1000;
+            justify-content: center;
+            align-items: center;
+            opacity: 0;
+            transition: opacity 0.3s ease;
+        }
+
+        .modal-overlay.show {
+            display: flex;
+            opacity: 1;
+        }
+
+        .modal-content {
+            background: var(--bg-card);
+            border-radius: 20px;
+            padding: 30px;
+            max-width: 400px;
+            width: 90%;
+            border: 1px solid rgba(255, 140, 0, 0.3);
+            box-shadow: 0 20px 60px rgba(255, 140, 0, 0.3);
+            transform: scale(0.8);
+            transition: transform 0.3s ease;
+            text-align: center;
+        }
+
+        .modal-overlay.show .modal-content {
+            transform: scale(1);
+        }
+
+        .modal-icon {
+            width: 60px;
+            height: 60px;
+            margin: 0 auto 20px;
+            border-radius: 50%;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+        }
+
+        .modal-icon.success {
+            background: rgba(0, 255, 157, 0.1);
+            border: 2px solid rgba(0, 255, 157, 0.3);
+        }
+
+        .modal-icon.error {
+            background: rgba(236, 72, 153, 0.1);
+            border: 2px solid rgba(236, 72, 153, 0.3);
+        }
+
+        .modal-icon.warning {
+            background: rgba(255, 179, 71, 0.1);
+            border: 2px solid rgba(255, 179, 71, 0.3);
+        }
+
+        .modal-icon.info {
+            background: rgba(168, 85, 247, 0.1);
+            border: 2px solid rgba(168, 85, 247, 0.3);
+        }
+
+        .modal-icon svg {
+            width: 30px;
+            height: 30px;
+        }
+
+        .modal-icon.success svg {
+            color: var(--code-green);
+        }
+
+        .modal-icon.error svg {
+            color: var(--accent-pink);
+        }
+
+        .modal-icon.warning svg {
+            color: #FFB347;
+        }
+
+        .modal-icon.info svg {
+            color: var(--accent-purple);
+        }
+
+        .modal-title {
+            font-size: 1.3rem;
+            font-weight: 600;
+            margin-bottom: 10px;
+            color: var(--text-light);
+        }
+
+        .modal-message {
+            font-size: 0.95rem;
+            color: var(--text-dim);
+            margin-bottom: 25px;
+            line-height: 1.5;
+            white-space: pre-wrap;
+            text-align: left;
+        }
+
+        .modal-btn {
+            padding: 12px 40px;
+            border: none;
+            border-radius: 10px;
+            font-size: 1rem;
+            font-weight: 600;
+            cursor: pointer;
+            transition: all 0.3s ease;
+        }
+
+        .modal-btn.primary {
+            background: linear-gradient(135deg, var(--orange-primary), var(--orange-dark));
+            color: white;
+        }
+
+        .modal-btn.primary:hover {
+            transform: translateY(-2px);
+            box-shadow: 0 5px 20px rgba(255, 140, 0, 0.4);
+        }
     </style>
 </head>
 <body>
@@ -585,9 +710,77 @@
             </form>
         </div>
     </div>
+
+    <!-- 自定义弹窗 -->
+    <div class="modal-overlay" id="modalOverlay">
+        <div class="modal-content">
+            <div class="modal-icon" id="modalIcon">
+                <svg id="modalIconSvg" width="30" height="30" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+                </svg>
+            </div>
+            <div class="modal-title" id="modalTitle">提示</div>
+            <div class="modal-message" id="modalMessage"></div>
+            <button class="modal-btn primary" id="modalBtn">确定</button>
+        </div>
+    </div>
+
     <script>
         // 使用根目录下的backend/auth.php
         const API_BASE_URL = '/backend';
+
+        // 自定义弹窗函数
+        function showModal(type, title, message, callback) {
+            const overlay = document.getElementById('modalOverlay');
+            const iconEl = document.getElementById('modalIcon');
+            const iconSvg = document.getElementById('modalIconSvg');
+            const titleEl = document.getElementById('modalTitle');
+            const messageEl = document.getElementById('modalMessage');
+            const btnEl = document.getElementById('modalBtn');
+
+            // 设置图标
+            const icons = {
+                success: '<polyline points="20,6 9,17 4,12"></polyline>',
+                error: '<circle cx="12" cy="12" r="10"></circle><line x1="15" y1="9" x2="9" y2="15"></line><line x1="9" y1="9" x2="15" y2="15"></line>',
+                warning: '<path d="M10.29 3.86L1.82 18a2 2 0 0 0 1.71 3h16.94a2 2 0 0 0 1.71-3L13.71 3.86a2 2 0 0 0-3.42 0z"></path><line x1="12" y1="9" x2="12" y2="13"></line><line x1="12" y1="17" x2="12.01" y2="17"></line>',
+                info: '<circle cx="12" cy="12" r="10"></circle><line x1="12" y1="16" x2="12" y2="12"></line><line x1="12" y1="8" x2="12.01" y2="8"></line>'
+            };
+
+            iconEl.className = 'modal-icon ' + type;
+            iconSvg.innerHTML = icons[type] || icons.info;
+            titleEl.textContent = title;
+            messageEl.textContent = message;
+
+            overlay.classList.add('show');
+
+            btnEl.onclick = function() {
+                overlay.classList.remove('show');
+                if (callback) callback();
+            };
+
+            overlay.onclick = function(e) {
+                if (e.target === overlay) {
+                    overlay.classList.remove('show');
+                    if (callback) callback();
+                }
+            };
+        }
+
+        function alert(msg, callback) {
+            showModal('info', '提示', msg, callback);
+        }
+
+        function success(msg, callback) {
+            showModal('success', '成功', msg, callback);
+        }
+
+        function error(msg, callback) {
+            showModal('error', '错误', msg, callback);
+        }
+
+        function warning(msg, callback) {
+            showModal('warning', '警告', msg, callback);
+        }
+
         // 当前邮箱（用于忘记密码流程）
         let currentEmail = '';
         // 验证码发送状态
@@ -623,7 +816,7 @@
             const password = document.getElementById('loginPassword').value;
             
             if (!username || !password) {
-                alert('请填写用户名和密码');
+                warning('请填写用户名和密码');
                 return;
             }
             
@@ -648,15 +841,15 @@
                 
                 if (result.success) {
                     // 登录成功处理
-                    alert('登录成功！');
+                    success('登录成功！');
                     // 这里可以重定向到主页或其他页面
                     console.log('登录成功:', result.user);
                 } else {
-                    alert(result.message || '登录失败');
+                    error(result.message || '登录失败');
                 }
             } catch (error) {
                 console.error('登录错误:', error);
-                alert('网络错误，请稍后重试\n错误信息: ' + error.message);
+                error('网络错误，请稍后重试\n错误信息: ' + error.message);
             }
         });
 
@@ -671,22 +864,22 @@
             const verification = document.getElementById('verification').value;
             
             if (!username || !password || !confirmPassword || !email || !verification) {
-                alert('请填写所有字段');
+                warning('请填写所有字段');
                 return;
             }
             
             if (password !== confirmPassword) {
-                alert('两次输入的密码不一致');
+                warning('两次输入的密码不一致');
                 return;
             }
             
             if (password.length < 6) {
-                alert('密码长度至少为6位');
+                warning('密码长度至少为6位');
                 return;
             }
             
             if (!isValidEmail(email)) {
-                alert('邮箱格式不正确');
+                warning('邮箱格式不正确');
                 return;
             }
             
@@ -712,7 +905,7 @@
                 const result = await response.json();
                 
                 if (result.success) {
-                    alert('注册成功！');
+                    success('注册成功！');
                     // 切换到登录表单
                     document.querySelectorAll('.tab-btn').forEach(btn => {
                         btn.classList.remove('active');
@@ -725,11 +918,11 @@
                     });
                     document.getElementById('loginForm').classList.add('active');
                 } else {
-                    alert(result.message || '注册失败');
+                    error(result.message || '注册失败');
                 }
             } catch (error) {
                 console.error('注册错误:', error);
-                alert('网络错误，请稍后重试\n错误信息: ' + error.message);
+                error('网络错误，请稍后重试\n错误信息: ' + error.message);
             }
         });
 
@@ -740,12 +933,12 @@
             const email = document.getElementById('forgotEmail').value;
             
             if (!email) {
-                alert('请填写邮箱');
+                warning('请填写邮箱');
                 return;
             }
             
             if (!isValidEmail(email)) {
-                alert('邮箱格式不正确');
+                warning('邮箱格式不正确');
                 return;
             }
             
@@ -776,11 +969,11 @@
                     // 填入邮箱
                     document.getElementById('verifyEmail').value = email;
                 } else {
-                    alert(result.message || '发送失败');
+                    error(result.message || '发送失败');
                 }
             } catch (error) {
                 console.error('忘记密码错误:', error);
-                alert('网络错误，请稍后重试\n错误信息: ' + error.message);
+                error('网络错误，请稍后重试\n错误信息: ' + error.message);
             }
         });
 
@@ -792,12 +985,12 @@
             const code = document.getElementById('verificationCode').value;
             
             if (!email || !code) {
-                alert('请填写邮箱和验证码');
+                warning('请填写邮箱和验证码');
                 return;
             }
             
             if (!isValidEmail(email)) {
-                alert('邮箱格式不正确');
+                warning('邮箱格式不正确');
                 return;
             }
             
@@ -818,7 +1011,7 @@
                 const result = await response.json();
                 
                 if (result.success) {
-                    alert('验证码验证成功！请设置新密码');
+                    success('验证码验证成功！请设置新密码');
                     // 显示重置密码表单
                     document.querySelectorAll('.auth-form').forEach(form => {
                         form.classList.remove('active');
@@ -827,11 +1020,11 @@
                     // 存储临时令牌
                     document.getElementById('resetTempToken').value = result.temp_token;
                 } else {
-                    alert(result.message || '验证失败');
+                    error(result.message || '验证失败');
                 }
             } catch (error) {
                 console.error('验证码验证错误:', error);
-                alert('网络错误，请稍后重试\n错误信息: ' + error.message);
+                error('网络错误，请稍后重试\n错误信息: ' + error.message);
             }
         });
 
@@ -844,17 +1037,17 @@
             const tempToken = document.getElementById('resetTempToken').value;
             
             if (!newPassword || !confirmPassword || !tempToken) {
-                alert('请填写所有字段');
+                warning('请填写所有字段');
                 return;
             }
             
             if (newPassword !== confirmPassword) {
-                alert('两次输入的密码不一致');
+                warning('两次输入的密码不一致');
                 return;
             }
             
             if (newPassword.length < 6) {
-                alert('密码长度至少为6位');
+                warning('密码长度至少为6位');
                 return;
             }
             
@@ -878,7 +1071,7 @@
                 const result = await response.json();
                 
                 if (result.success) {
-                    alert('密码重置成功！请使用新密码登录');
+                    success('密码重置成功！请使用新密码登录');
                     // 返回到登录页面
                     document.querySelectorAll('.tab-btn').forEach(btn => {
                         btn.classList.remove('active');
@@ -891,11 +1084,11 @@
                     });
                     document.getElementById('loginForm').classList.add('active');
                 } else {
-                    alert(result.message || '重置失败');
+                    error(result.message || '重置失败');
                 }
             } catch (error) {
                 console.error('重置密码错误:', error);
-                alert('网络错误，请稍后重试\n错误信息: ' + error.message);
+                error('网络错误，请稍后重试\n错误信息: ' + error.message);
             }
         });
 
@@ -931,12 +1124,12 @@
         document.getElementById('sendVerification').addEventListener('click', async function() {
             const email = document.getElementById('email').value;
             if (!email) {
-                alert('请先填写邮箱');
+                warning('请先填写邮箱');
                 return;
             }
             
             if (!isValidEmail(email)) {
-                alert('邮箱格式不正确');
+                warning('邮箱格式不正确');
                 return;
             }
             
@@ -992,9 +1185,9 @@
                 const result = await response.json();
                 
                 if (result.success) {
-                    alert('验证码已发送到您的邮箱');
+                    success('验证码已发送到您的邮箱');
                 } else {
-                    alert(result.message || '验证码发送失败');
+                    error(result.message || '验证码发送失败');
                     // 如果发送失败，重置倒计时
                     clearInterval(countdown);
                     this.disabled = false;
@@ -1023,7 +1216,7 @@
                 
                 // 显示详细错误信息
                 const errorMessage = `网络错误: Failed to fetch\n\n详细信息:\n${errorDetails.join('\n')}\n\n请求地址: ${API_BASE_URL}/auth.php`;
-                alert(errorMessage);
+                error(errorMessage);
                 
                 // 打印到控制台供调试
                 console.log('API URL:', API_BASE_URL + '/auth.php');

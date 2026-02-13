@@ -2,10 +2,12 @@
 // 处理 CORS 预检请求 - 必须放在最前面
 if ($_SERVER['REQUEST_METHOD'] === 'OPTIONS') {
     header('Access-Control-Allow-Origin: *');
-    header('Access-Control-Allow-Methods: POST, GET, OPTIONS');
-    header('Access-Control-Allow-Headers: Content-Type');
+    header('Access-Control-Allow-Methods: POST, GET, OPTIONS, PUT, DELETE');
+    header('Access-Control-Allow-Headers: Content-Type, Authorization, X-Requested-With');
     header('Access-Control-Max-Age: 86400');
+    header('Access-Control-Allow-Credentials: true');
     header('Content-Length: 0');
+    header('Content-Type: text/plain');
     http_response_code(200);
     exit();
 }
@@ -13,8 +15,10 @@ if ($_SERVER['REQUEST_METHOD'] === 'OPTIONS') {
 // 允许跨域访问
 header('Access-Control-Allow-Origin: *');
 header('Access-Control-Allow-Methods: POST, GET, OPTIONS');
-header('Access-Control-Allow-Headers: Content-Type');
+header('Access-Control-Allow-Headers: Content-Type, X-Requested-With');
+header('Access-Control-Max-Age: 86400');
 header('Content-Type: application/json');
+header('X-Content-Type-Options: nosniff');
 
 // 邮件服务配置
 define('MAIL_API_URL', 'https://api.mmp.cc/api/mail');

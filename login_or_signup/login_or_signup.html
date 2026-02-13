@@ -586,9 +586,8 @@
         </div>
     </div>
     <script>
-        // 使用相对路径，在同域下自动使用当前域
-        const API_BASE_URL = ''; // 相对路径，同域访问
-        const API_BASE_URL_FULL = 'https://song-shu.infinityfree.me'; // 备用完整URL
+        // 使用相对路径，部署到同域下使用
+        const API_BASE_URL = '';
         // 当前邮箱（用于忘记密码流程）
         let currentEmail = '';
         // 验证码发送状态
@@ -1045,8 +1044,8 @@
             testBtn.innerHTML = '测试中...';
             
             const currentUrl = window.location.href;
-            // 使用完整URL测试
-            const apiUrl = API_BASE_URL_FULL + '/auth.php';
+            // 使用相对路径
+            const apiUrl = API_BASE_URL + '/auth.php';
             
             alert('诊断信息：\n\n当前页面: ' + currentUrl + '\nAPI地址: ' + apiUrl);
             

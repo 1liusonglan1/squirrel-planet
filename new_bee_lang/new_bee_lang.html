@@ -5,7 +5,10 @@
     <link rel="icon" type="image/x-icon" href="bee.ico">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>New Bee Lang - 最甜蜜的编程语言</title>
-    <link href="https://fonts.googleapis.com/css2?family=Noto+Sans+SC:wght@300;400;500;700&family=Fira+Code:wght@400;500&display=swap" rel="stylesheet">
+    <!-- Google Fonts -->
+    <link rel="preconnect" href="https://fonts.googleapis.com">
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+    <link href="https://fonts.googleapis.com/css2?family=Archivo:wght@300;400;500;600;700;800&family=Fira+Code:wght@400;500&family=Space+Grotesk:wght@300;400;500;600;700&display=swap" rel="stylesheet">
     <style>
         * {
             margin: 0;
@@ -16,12 +19,26 @@
         :root {
             --honey-gold: #FFD700;
             --honey-light: #FFECB3;
-            --dark-bg: #0D0D0D;
-            --card-bg: #1A1A1A;
-            --text-primary: #FFFFFF;
-            --text-secondary: #B0B0B0;
+            --dark-bg: #0F172A;
+            --card-bg: #1E293B;
+            --text-primary: #F8FAFC;
+            --text-secondary: #94A3B8;
             --error-red: #FF6B6B;
-            --success-green: #69F0AE;
+            --success-green: #22C55E;
+            --font-primary: 'Archivo', -apple-system, BlinkMacSystemFont, sans-serif;
+            --font-mono: 'Fira Code', 'Space Grotesk', 'Courier New', monospace;
+        }
+
+        /* Reduced Motion Support */
+        @media (prefers-reduced-motion: reduce) {
+            *,
+            *::before,
+            *::after {
+                animation-duration: 0.01ms !important;
+                animation-iteration-count: 1 !important;
+                transition-duration: 0.01ms !important;
+                scroll-behavior: auto !important;
+            }
         }
 
         html {
@@ -29,7 +46,7 @@
         }
 
         body {
-            font-family: 'Noto Sans SC', sans-serif;
+            font-family: var(--font-primary);
             background-color: var(--dark-bg);
             color: var(--text-primary);
             line-height: 1.6;
@@ -83,6 +100,7 @@
             font-weight: 500;
             transition: color 0.3s ease;
             position: relative;
+            cursor: pointer;
         }
 
         .nav-links a::after {
@@ -289,6 +307,7 @@
             transition: all 0.4s ease;
             position: relative;
             overflow: hidden;
+            cursor: pointer;
         }
 
         .feature-card::before {
@@ -326,7 +345,9 @@
         .feature-icon svg {
             width: 30px;
             height: 30px;
-            color: var(--dark-bg);
+            color: var(--dark-bg) !important;
+            stroke: var(--dark-bg) !important;
+            fill: var(--dark-bg) !important;
         }
 
         .feature-card h3 {
@@ -386,10 +407,10 @@
         }
 
         .code-block {
-            background: #0D0D0D;
+            background: var(--dark-bg);
             border-radius: 12px;
             padding: 20px;
-            font-family: 'Fira Code', monospace;
+            font-family: var(--font-mono);
             position: relative;
             overflow: hidden;
         }
@@ -494,6 +515,7 @@
             border-radius: 12px;
             padding: 20px;
             transition: all 0.3s ease;
+            cursor: pointer;
         }
 
         .command-item:hover {
@@ -501,7 +523,7 @@
         }
 
         .command-name {
-            font-family: 'Fira Code', monospace;
+            font-family: var(--font-mono);
             color: var(--honey-gold);
             font-size: 1.1rem;
             margin-bottom: 10px;
@@ -562,7 +584,7 @@
         }
 
         .terminal-header {
-            background: #1A1A1A;
+            background: var(--card-bg);
             padding: 15px 20px;
             display: flex;
             align-items: center;
@@ -587,7 +609,7 @@
 
         .terminal-body {
             padding: 25px;
-            font-family: 'Fira Code', monospace;
+            font-family: var(--font-mono);
             font-size: 0.95rem;
             line-height: 1.8;
             overflow-x: auto;
@@ -649,10 +671,10 @@
         }
 
         .error-example {
-            background: #0D0D0D;
+            background: var(--dark-bg);
             border-radius: 12px;
             padding: 20px;
-            font-family: 'Fira Code', monospace;
+            font-family: var(--font-mono);
             margin-top: 20px;
             border-left: 4px solid var(--error-red);
         }
@@ -749,10 +771,6 @@
         footer p {
             color: var(--text-secondary);
             margin-bottom: 10px;
-        }
-
-        footer .heart {
-            color: var(--honey-gold);
         }
 
         /* Scroll Animations */
@@ -1163,11 +1181,7 @@
         </div>
         <div class="error-content animate-on-scroll">
             <div class="error-icon">
-                <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
-                    <circle cx="12" cy="12" r="10"/>
-                    <line x1="15" y1="9" x2="9" y2="15"/>
-                    <line x1="9" y1="9" x2="15" y2="15"/>
-                </svg>
+                <span style="font-size: 40px;">🐝</span>
             </div>
             <div class="error-info">
                 <h3>嘲讽系统</h3>
@@ -1216,8 +1230,8 @@
     </section>
     <!-- Footer -->
     <footer>
-        <p>Made with <span class="heart">❤</span> by Bees</p>
-        <p>© <script>document.write(new Date().getFullYear())</script> New Bee Lang | 祝你「好运」！</p>
+        <p>Made with <svg width="16" height="16" viewBox="0 0 24 24" fill="#FFD700" stroke="#FFD700" stroke-width="2" style="vertical-align: middle;"><path d="M20.84 4.61a5.5 5.5 0 0 0-7.78 0L12 5.67l-1.06-1.06a5.5 5.5 0 0 0-7.78 7.78l1.06 1.06L12 21.23l7.78-7.78 1.06-1.06a5.5 5.5 0 0 0 0-7.78z"/></svg> by Bees</p>
+        <p>&copy; <script>document.write(new Date().getFullYear())</script> New Bee Lang | 祝你「好运」！</p>
     </footer>
     <script>
         // Scroll Animations

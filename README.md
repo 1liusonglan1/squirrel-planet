@@ -49,7 +49,7 @@
 
 ## 📞 联系
 
-- **网站** 1liusonglan1.github.io
+- **网站** song-shu.infinityfree.me
 - **项目** Tanex Script、New Bee Lang等
 
 ---
